@@ -33,7 +33,7 @@ time trying a different approach: learn enough about the Viva tool used to
 program Dexter FPGA. It has a unique approach that is different from the
 Verilog/VHDL.
 
-The Viva tool itself was published at some point by Haddington Dynamics as a
+The Viva tool itself was published at some point by [Haddington Dynamics](https://github.com/HaddingtonDynamics/Dexter) as a
 binary, along with a source code for the Dexter gateware. Plus, the partial
 source code of Viva was made available at some point under the GPL-3.0 license
 (all included in this repository).
