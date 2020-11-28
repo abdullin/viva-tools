@@ -1,0 +1,11 @@
+DataSet Fix32 = ( Word , Word ); //_ Attributes 4,12632256,System\Static
+DataSet Fix16 = ( Byte , Byte ); //_ Attributes 4,32896,System\Static
+DataSet Complex = ( List ); //_ Attributes 1,8421504
+DataSet Fixed = ( List ); //_ Attributes 1,4227327
+DataSet Floating = ( List ); //_ Attributes 1,32896
+DataSet Signed = ( Variant ); //_ Attributes 1,16776960
+DataSet TBus = ( List ); //_ Attributes 1,0,User\General
+DataSet IndexedEl = ( Variant , Variant ); //_ Attributes 1,13290239,User\Join
+DataSet IndEl_Or_Wrap = ( Variant ); //_ Attributes 1,8421631,User\Join
+DataSet IndEl_And_Wrap = ( Variant ); //_ Attributes 1,8421631,User\Join
+DataSet IndEl_Unique_Wrap = ( Variant ); //_ Attributes 1,8421631,User\Join
