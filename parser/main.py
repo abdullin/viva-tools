@@ -54,7 +54,7 @@ def main(create_missing):
 
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
-obj_def = re.compile("Object \((.+?)\)(.+?)\(([.\n,\w\W]+?)\) ;?\n//_ Attributes\s(.*)", re.MULTILINE)
+obj_def = re.compile("Object \((.+?)\)(.+?)\(([.\n,\w\W]+?)\)[\s;]*//_ Attributes\s(.*)", re.MULTILINE)
 
 def extract_pairs(line: str):
     pairs = line.strip().split(",")
@@ -70,6 +70,8 @@ def parse_object_def(l, body):
 
 
     print(l)
+    sep()
+    print(body)
 
     m = obj_def.search(l)
 
@@ -151,21 +153,21 @@ def parse_text(name):
             body = ""
 
             for l in lines[i:]:
-                if behavior_started:
-                    body += l
-                else:
-                    declaration += l
 
                 i+=1
-                if l == "{":
+                if l.startswith("{"):
                     behavior_started = True
                     continue
                 if behavior_started and l == "}":
                     break
-
                 if not behavior_started and l.endswith(";"):
                     break
 
+
+                if behavior_started:
+                    body += l
+                else:
+                    declaration += l
 
 
             data = parse_object_def(declaration, body)

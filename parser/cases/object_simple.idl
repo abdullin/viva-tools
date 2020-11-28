@@ -1,0 +1,24 @@
+Object ( List WholeLSB, List Out2) StripWholeLSB( List In1)
+//_ Attributes TreeGroup="BotControl"
+{
+ //_ Object Prototypes
+ Object ( List In1) Input;  //_GUI 24,32
+ Object Output( List WholeLSB) ;  //_GUI 88,31
+ Object Output:A( List Out2) ;  //_GUI 88,40
+ Object ( Variant Out1, Variant Out2) ListIn( List In) ;  //_GUI 29,30
+ Object ( List Out) ListOut( Variant In1, Variant In2) ;  //_GUI 73,38
+ Object ( List Out) ListOut:A( Variant In1, Variant In2) ;  //_GUI 74,29
+ Object ( Variant WholeLSB, Variant Out2) StripWholeLSB( Variant In1) ;  //_GUI 47,38
+ Object ( Variant WholeLSB, Variant Out2) StripWholeLSB:A( Variant In1) ;  //_GUI 47,29
+
+ //_ Behavior Topology
+ Output.0 = ListOut:A.0;
+ Output:A.0 = ListOut.0;
+ ListIn.0 = Input.0;
+ ListOut.0 = StripWholeLSB.1;
+ ListOut.1 = StripWholeLSB:A.1;  //_GUI 68,40, 68,34
+ ListOut:A.0 = StripWholeLSB.0;  //_GUI 71,34, 71,37, 65,37, 65,40
+ ListOut:A.1 = StripWholeLSB:A.0;
+ StripWholeLSB.0 = ListIn.0;  //_GUI 40,41
+ StripWholeLSB:A.0 = ListIn.1;
+}
