@@ -1,11 +1,11 @@
-[:DataSet "Fix32" ["Word" "Word"] {:context 4 :color 12632256 :tree ["System" "Static"]}]
-[:DataSet "Fix16" ["Byte" "Byte"] {:context 4 :color 32896 :tree ["System" "Static"]}]
-[:DataSet "Complex" ["List"] {:context 1 :color 8421504}]
-[:DataSet "Fixed" ["List"] {:context 1 :color 4227327}]
-[:DataSet "Floating" ["List"] {:context 1 :color 32896}]
-[:DataSet "Signed" ["Variant"] {:context 1 :color 16776960}]
-[:DataSet "TBus" ["List"] {:context 1 :tree ["User" "General"]}]
-[:DataSet "IndexedEl" ["Variant" "Variant"] {:context 1 :color 13290239 :tree ["User" "Join"]}]
-[:DataSet "IndEl_Or_Wrap" ["Variant"] {:context 1 :color 8421631 :tree ["User" "Join"]}]
-[:DataSet "IndEl_And_Wrap" ["Variant"] {:context 1 :color 8421631 :tree ["User" "Join"]}]
-[:DataSet "IndEl_Unique_Wrap" ["Variant"] {:context 1 :color 8421631 :tree ["User" "Join"]}]
+(:DataSet "Fix32" ["Word" "Word"] {:context 4 :color 12632256 :tree ["System" "Static"]})
+(:DataSet "Fix16" ["Byte" "Byte"] {:context 4 :color 32896 :tree ["System" "Static"]})
+(:DataSet "Complex" ["List"] {:context 1 :color 8421504})
+(:DataSet "Fixed" ["List"] {:context 1 :color 4227327})
+(:DataSet "Floating" ["List"] {:context 1 :color 32896})
+(:DataSet "Signed" ["Variant"] {:context 1 :color 16776960})
+(:DataSet "TBus" ["List"] {:context 1 :tree ["User" "General"]})
+(:DataSet "IndexedEl" ["Variant" "Variant"] {:context 1 :color 13290239 :tree ["User" "Join"]})
+(:DataSet "IndEl_Or_Wrap" ["Variant"] {:context 1 :color 8421631 :tree ["User" "Join"]})
+(:DataSet "IndEl_And_Wrap" ["Variant"] {:context 1 :color 8421631 :tree ["User" "Join"]})
+(:DataSet "IndEl_Unique_Wrap" ["Variant"] {:context 1 :color 8421631 :tree ["User" "Join"]})

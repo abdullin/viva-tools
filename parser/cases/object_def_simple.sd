@@ -1,0 +1,2 @@
+Object ( Bit Out1) INVERT( Bit In1) ;
+//_ Attributes System="X86CPU",Resource="TIMESLICE"

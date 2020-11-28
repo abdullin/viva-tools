@@ -1,0 +1,3 @@
+Object ( BIN036 R) MULT18X18S( BIN018 A, BIN018 B
+    , Bit C, Bit CE, Bit R) ;
+//_ Attributes System="X86CPU",Resource="TIMESLICE"
