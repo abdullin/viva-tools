@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.05.03"/>
+    <PROJECT value="Viva.exe"/>
+    <OBJFILES value="Viva.obj Main.obj Project.obj MyTScrollingWinControl.obj X86ExThread.obj 
+      SearchEngine.obj SystemEditor.obj Translators.obj ResourceManagers.obj 
+      NewSystemDialog.obj ChipData.obj MyTShape.obj AttributeCalculator.obj 
+      ReadWrite.obj Cost.obj DataSet.obj I2adl.obj I2adlList.obj Node.obj 
+      Resource.obj VivaSystem.obj SynthGraphic.obj Globals.obj Widget.obj 
+      WidgetScrollBar.obj WidgetSpinEdit.obj WidgetButton.obj WidgetEditor.obj 
+      WidgetTextBox.obj WidgetGraph.obj WidgetMemo.obj WidgetForm.obj 
+      AttributeEditor.obj About.obj ErrorTrapForm.obj ErrorTrap.obj 
+      TreeGroupForm.obj NodeList.obj VivaIcon.obj MyTMemo.obj Asm.obj 
+      Settings.obj ChooseDataSet.obj VivaIO.obj WidgetPaintBox.obj 
+      ProjectSettings.obj I2adlEditor.obj COMFormDesigner.obj ObjectBrowser.obj 
+      VivaComForm.obj ComManager.obj ComI2adl.obj List.obj ActiveXWidgetForm.obj 
+      WidgetActiveX.obj IniFile.obj Utils.obj Dismember.obj StringList.obj 
+      MessageInfo.obj EditTextFile.obj"/>
+    <RESFILES value="Viva.res"/>
+    <IDLFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) Main.dfm NewSystemDialog.dfm SynthGraphic.dfm WidgetEditor.dfm 
+      WidgetForm.dfm AttributeEditor.dfm About.dfm ErrorTrapForm.dfm 
+      TreeGroupForm.dfm Settings.dfm ChooseDataSet.dfm ProjectSettings.dfm 
+      COMFormDesigner.dfm ObjectBrowser.dfm VivaComForm.dfm 
+      ActiveXWidgetForm.dfm EditTextFile.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="bcb97axserver50.lib bcbsmp50.lib vclx50.lib dclocx50.lib vcl50.lib"/>
+    <SPARELIBS value="vcl50.lib dclocx50.lib vclx50.lib bcbsmp50.lib bcb97axserver50.lib"/>
+    <PACKAGES value="vcl50.bpi vclx50.bpi vcljpg50.bpi bcbsmp50.bpi qrpt50.bpi vcldb50.bpi 
+      vclbde50.bpi ibsmp50.bpi vcldbx50.bpi teeui50.bpi teedb50.bpi tee50.bpi 
+      nmfast50.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="NO_STRICT"/>
+    <MAINSOURCE value="Viva.cpp"/>
+    <INCLUDEPATH value="$(BCB)\Lib;$(BCB)\Imports;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="$(BCB)\Imports;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w8092 -w8091 -w8090 -w8089 -w8087 -wprc -wuse -wucp -wstv -wstu -wsig 
+      -wpin -w-par -wnod -wnak -w-8027 -wdef -wcln -wbbf -w-aus -wasm -w-asc 
+      -wamp -wamb"/>
+    <WARNOPTSTR value=""/>
+  </MACROS>
+  <OPTIONS>
+    <CFLAG1 value="-Od -H=Viva.csm -Hc -Vx -Ve -X- -r- -a1 -5 -b- -k -v -vi- -c -tW -tWM"/>
+    <PFLAGS value="-$Y+ -$W -$O- -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zi"/>
+    <LFLAGS value="-D&quot;&quot; -H:0x300000 -S:0x300000 -aa -Tpe -x -Gn -v"/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib"/>
+  </LINKER>
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=3
+MinorVer=1
+Release=2
+Build=6
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1033
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=3.1.2.6
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=2
+Item0=$(BCB)\Lib;$(BCB)\Imports;$(BCB)\include;$(BCB)\include\vcl
+Item1=c:\vivadev\pviva1\;C:\Program Files\Borland\CBuilder5\Projects\;C:\Program Files\Borland\CBuilder4\Projects\;$(BCB)\Lib;$(BCB)\Imports;c:\vivadev\Lib\;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=3
+Item0=$(BCB)\Imports;$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=$(BCB)\Imports;$(BCB)\Projects\Lib;c:\vivadev\Lib\;$(BCB)\lib\obj;$(BCB)\lib
+Item2=c:\vivadev\pviva1\;C:\Program Files\Borland\CBuilder5\Projects\;C:\Program Files\Borland\CBuilder4\Projects\;$(BCB)\Imports;$(BCB)\Projects\Lib;c:\vivadev\Lib\;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[HistoryLists\hlRunParameters]
+Count=7
+Item0=aa.ipg
+Item1=a3.ipg
+Item2=fgpaor.ipg
+Item3=bug3a.ipg
+Item4=bug.idl
+Item5=alib2.ipg
+Item6=drw11.idl
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>
