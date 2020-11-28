@@ -1,0 +1,294 @@
+// VIVA  Implementation Independent Recursive Description Language
+// System  X86 11/11/02 1:08:52 PM
+
+
+DataSet Fix32 = ( Word , Word ); //_Attributes 4,12632256,System\Static
+DataSet Pipelined = ( NULL ); //_Attributes 1,0
+DataSet Fix16 = ( Byte , Byte ); //_Attributes 4,32896,System\Static
+DataSet "Byte*" = ( Pointer ); //_Attributes 1,11141375,System,16401
+DataSet List = ( Variant , Variant ); //_Attributes 1,16711808
+DataSet Complex = ( List ); //_Attributes 1,8421504
+DataSet Fixed = ( List ); //_Attributes 1,4227327
+DataSet DeviceIOControlConstants = ( Word , Word ); //_Attributes 1,11141375,VIVASTANDARDOBJECTSLib,3
+DataSet "DWord*" = ( Word , Word ); //_Attributes 1,11141375,System\Static,16403
+DataSet DeviceAccessConstants = ( Word , Word ); //_Attributes 1,11141375,VIVASTANDARDOBJECTSLib,3
+DataSet DeviceShareConstants = ( Word , Word ); //_Attributes 1,11141375,VIVASTANDARDOBJECTSLib,3
+DataSet DeviceCreateConstants = ( Word , Word ); //_Attributes 1,11141375,VIVASTANDARDOBJECTSLib,3
+DataSet DeviceAttributeConstants = ( Word , Word ); //_Attributes 1,11141375,VIVASTANDARDOBJECTSLib,3
+DataSet "QWord*" = ( Word , Word ); //_Attributes 1,11141375,System\Static,16405
+DataSet Floating = ( List ); //_Attributes 1,32896
+DataSet Signed = ( Variant ); //_Attributes 1,16776960
+
+Object ( Bit "Internal Node") Input;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object Output( Bit "Internal Node") ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Out1) Assign( Bit Clock, Bit In2) ;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Out) AND( Bit In1, Bit In2) ;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Out) OR( Bit In1, Bit In2) ;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Out) INVERT( Bit In1) ;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+Object ( Variant "UIXCPU Internal Sink") Transport( Variant "Input From UI") 
+//_Attributes System=UIXCPU,Documentation=Input From UI
+{
+ //_ Object Prototypes
+ Object ( Variant "Input From UI") Input;  //_GUI 30,26
+ //_Attributes System=..\X86UI,Resource=TIMESLICE
+ Object Output( Variant "UIXCPU Internal Sink") ;  //_GUI 48,26
+ //_Attributes Resource=TIMESLICE
+
+ // Behavior Topology
+ Output = Input;  
+}
+
+Object ( Variant "UIXCPU Internal Sink") Transport( Variant "Input From CPU") 
+//_Attributes System=UIXCPU,Documentation=Input From CPU
+{
+// Input From CPU
+ //_ Object Prototypes
+ Object ( Variant "Input From CPU") Input;  //_GUI 30,27
+ //_Attributes System=..\X86CPU,Resource=TIMESLICE
+ Object Output( Variant "UIXCPU Internal Sink") ;  //_GUI 48,27
+ //_Attributes Resource=TIMESLICE
+
+ // Behavior Topology
+ Output = Input;  
+}
+
+Object ( Variant "Output to UI") Transport( Variant "UIXCPU Internal Source") 
+//_Attributes System=UIXCPU,Documentation=Output to UI
+{
+ //_ Object Prototypes
+ Object ( Variant "UIXCPU Internal Source") Input;  //_GUI 30,28
+ //_Attributes Resource=TIMESLICE
+ Object Output( Variant "Output to UI") ;  //_GUI 48,28
+ //_Attributes System=..\X86UI,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output = Input;  
+}
+
+Object ( Variant "Output to CPU") Transport( Variant "UIXCPU Internal Source") 
+//_Attributes System=UIXCPU,Documentation=Output to CPU
+{
+ //_ Object Prototypes
+ Object ( Variant "UIXCPU Internal Source") Input;  //_GUI 30,29
+ //_Attributes Resource=TIMESLICE
+ Object Output( Variant "Output to CPU") ;  //_GUI 47,29
+ //_Attributes System=..\X86CPU,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output = Input;  
+}
+
+Object ( Bit VCC) VCC;
+//_Attributes System=X86UI,Resource=TIMESLICE
+
+Object ( Bit GROUND) GND;
+//_Attributes System=X86UI,Resource=TIMESLICE
+
+Object ( DWord "(Get) ScrollBar1 Position") Input( Bit Go) ;
+//_Attributes System=X86UI,Resource=TIMESLICE,OnComponent=ScrollBar1,ComponentIndex=33,PropertyName=Position,PropertyType=2
+
+Object ( Bit "ScrollBar1 OnChange Sender") Input;
+//_Attributes System=X86UI,Resource=TIMESLICE,OnComponent=ScrollBar1,ComponentIndex=33,PropertyName=OnChange,PropertyType=9,ParamNumber=0,ParamType=8,ParamName=Sender,OneOf=1
+
+Object Output( DWord "(Set) ScrollBar3 Position") ;
+//_Attributes System=X86UI,Resource=TIMESLICE,OnComponent=ScrollBar3,ComponentIndex=35,PropertyName=Position,PropertyType=2
+
+Object ( DWord Sent) Go;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE,KeepObject=One side
+
+Object ( DWord Result) $Spawn( DWord Send) ;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE,KeepObject=One side
+
+Object ( Bit Stopping) Stop( DWord Stop) ;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE,KeepObject=One side
+
+Object ( Bit Q) $RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) ;
+//_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit ClkG) Implementor( Bit $Clock, Bit "Run/Step"
+    , Bit Step) 
+//_Attributes System=X86ClkImport
+{
+ //_ Object Prototypes
+ Object ( Bit $Clock) Input;  //_GUI 22,22
+ Object ( Bit "Run/Step") Input:A;  //_GUI 24,28
+ Object ( Bit Step) Input:B;  //_GUI 24,36
+ //_Attributes WidgetLeft=265,WidgetTop=280
+ Object Output( Bit ClkG) ;  //_GUI 70,23
+ //_Attributes Resource=*Global
+ Object ( Bit O) Mux( Bit A, Bit B
+    , Bit S) ;  //_GUI 54,21
+ //_Attributes System=X86CPU,Documentation=Bit
+
+ // Behavior Topology
+ Output = Mux;  
+ Mux.A = Input;  
+ Mux.B = Input:B;  //_GUI 41,26, 41,37
+ Mux.S = Input:A;  
+}
+
+Object ( Bit Q) Reg( Bit D, Bit ClkG) 
+//_Attributes System=X86CPU
+{
+ //_ Object Prototypes
+ Object ( Bit D) Input;  //_GUI 23,20
+ Object ( Bit ClkG) Input:A;  //_GUI 23,23
+ //_Attributes Resource=*Global
+ Object Output( Bit Q) ;  //_GUI 47,21
+ Object ( Bit EN) Input:B;  //_GUI 23,26
+ //_Attributes Constant=*1
+ Object ( Bit CLR) Input:C;  //_GUI 23,29
+ //_Attributes Constant=*0
+ Object ( Bit Q) $RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) ;  //_GUI 32,19
+ //_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output = $RegClr;  
+ $RegClr.D = Input;  
+ $RegClr.ClkG = Input:A;  
+ $RegClr.EN = Input:B;  
+ $RegClr.CLR = Input:C;  
+}
+
+Object ( Bit Q) RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) 
+//_Attributes System=X86CPU
+{
+ //_ Object Prototypes
+ Object ( Bit D) Input;  //_GUI 23,20
+ Object ( Bit ClkG) Input:A;  //_GUI 23,23
+ //_Attributes Resource=*Global
+ Object ( Bit EN) Input:B;  //_GUI 23,26
+ //_Attributes Constant=1
+ Object ( Bit CLR) Input:C;  //_GUI 23,29
+ //_Attributes Constant=0
+ Object Output( Bit Q) ;  //_GUI 47,21
+ Object ( Bit Q) $RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) ;  //_GUI 32,19
+ //_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output = $RegClr;  
+ $RegClr.D = Input;  
+ $RegClr.ClkG = Input:A;  
+ $RegClr.EN = Input:B;  
+ $RegClr.CLR = Input:C;  
+}
+
+Object ( Bit Q) RegEn( Bit D, Bit ClkG
+    , Bit EN) 
+//_Attributes System=X86CPU
+{
+ //_ Object Prototypes
+ Object ( Bit D) Input;  //_GUI 23,20
+ Object ( Bit ClkG) Input:A;  //_GUI 23,23
+ //_Attributes Resource=*Global
+ Object ( Bit EN) Input:B;  //_GUI 23,26
+ //_Attributes Constant=1
+ Object Output( Bit Q) ;  //_GUI 47,21
+ Object ( Bit CLR) Input:C;  //_GUI 23,29
+ //_Attributes Constant=*0
+ Object ( Bit Q) $RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) ;  //_GUI 32,19
+ //_Attributes Primitive,System=X86CPU,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output = $RegClr;  
+ $RegClr.D = Input;  
+ $RegClr.ClkG = Input:A;  
+ $RegClr.EN = Input:B;  
+ $RegClr.CLR = Input:C;  
+}
+
+Object ContextualDataSets( List In1, Floating In2, Signed In3
+    , Fixed In4, Complex In5, Pipelined In6) 
+//_Attributes System=X86CPU
+{
+// This object exists in order to persist the basic contextual data sets.  Since they are all defined within Viva, they must be referenced in a save file in order to maintain their existence.
+//
+// Date Last Modified:
+// 09 Nov 2002
+//
+// Author:
+// Samuel Brown
+ //_ Object Prototypes
+ Object ( List In1) Input;  //_GUI 53,39
+ Object ( Floating In2) Input:A;  //_GUI 53,43
+ Object ( Signed In3) Input:B;  //_GUI 53,47
+ Object ( Fixed In4) Input:C;  //_GUI 53,51
+ Object ( Complex In5) Input:D;  //_GUI 53,56
+ Object ( Pipelined In6) Input:E;  //_GUI 53,61
+
+ // Behavior Topology
+}
+
+Object ( Bit O) Mux( Bit A, Bit B
+    , Bit S) 
+//_Attributes System=X86CPU,Documentation=Bit
+{
+// Mux - Variant Select Case
+//
+// Date Last Modified:
+// 09 Nov 2002
+//
+// Author:
+// Samuel Brown
+// SBS Inc.
+ //_ Object Prototypes
+ Object ( Bit A) Input;  //_GUI 9,12
+ Object ( Bit B) Input:A;  //_GUI 9,21
+ Object ( Bit S) Input:B;  //_GUI 9,24
+ Object Output( Bit O) ;  //_GUI 78,14
+ Object ( Bit Out1) INVERT( Bit In1) ;  //_GUI 22,15
+ Object ( Bit Out) AND( Bit In1, Bit In2) ;  //_GUI 45,11
+ Object ( Bit Out) AND:A( Bit In1, Bit In2) ;  //_GUI 46,20
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction
+    ( Bit In0) ;  //_GUI 19,24
+ Object ( Bit Out) OR( Bit In1, Bit In2) ;  //_GUI 61,12
+
+ // Behavior Topology
+ Output = OR;  
+ INVERT = Junction.Out1;  //_GUI 20,18
+ AND.In1 = Input;  
+ AND.In2 = INVERT;  //_GUI 40,16, 40,18
+ AND:A.In1 = Input:A;  
+ AND:A.In2 = Junction.Out2;  
+ Junction = Input:B;  
+ OR.In1 = AND;  
+ OR.In2 = AND:A;  //_GUI 58,17
+}
+
+System X86
+//_Attributes 1,Resource=Default,DefaultInputWidget=ScrollBar,DefaultOutputWidget=ScrollBar,WidgetSystem=X86UI,WidgetResource=TIMESLICE,WidgetLocation=?,DefaultTargetSystem=X86CPU
+{
+ System X86CPU
+ //_Attributes 2,Resource=X86Main
+ {
+ }
+ System X86UI
+ //_Attributes 3,Resource=X86UI
+ {
+ }
+ System UIXCPU
+ //_Attributes 7,Resource=UIBus
+ {
+ }
+ System X86ClkImport
+ //_Attributes 6,Resource=ClockImport
+ {
+ }
+}

@@ -1,0 +1,435 @@
+VIVA 3.02 Implementation Independent Algorithm Description Language
+// System  X86(Attributes) 2/5/2007 2:38:46 PM
+
+
+
+Object Libraries
+//_Attributes System=X86(Attributes)
+{
+ //_ Object Prototypes
+ Object Text;  //_GUI 44,32,<TreeGroup>System_x86Arial,8,-2147483640,0
+
+ // Behavior Topology
+}
+
+Object ( Bit Out1) AND( Bit In1, Bit In2) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Out1) OR( Bit In1, Bit In2) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Out1) INVERT( Bit In1) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Variant "UIXCPU Internal Sink") Transport( Variant "Input From UI") 
+//_Attributes System=UIXCPU,Documentation="Input From UI"
+{
+ //_ Object Prototypes
+ Object ( Variant "Input From UI") Input;  //_GUI 30,26
+ //_Attributes System=..\X86UI,Resource=TIMESLICE
+ Object Output( Variant "UIXCPU Internal Sink") ;  //_GUI 48,26
+ //_Attributes Resource=TIMESLICE
+
+ // Behavior Topology
+ Output.0 = Input.0;  
+}
+
+Object ( Variant "UIXCPU Internal Sink") Transport( Variant "Input From CPU") 
+//_Attributes System=UIXCPU,Documentation="Input From CPU"
+{
+ // Input From CPU
+ //_ Object Prototypes
+ Object ( Variant "Input From CPU") Input;  //_GUI 30,27
+ //_Attributes System=..\X86CPU,Resource=TIMESLICE
+ Object Output( Variant "UIXCPU Internal Sink") ;  //_GUI 48,27
+ //_Attributes Resource=TIMESLICE
+
+ // Behavior Topology
+ Output.0 = Input.0;  
+}
+
+Object ( Variant "Output to UI") Transport( Variant "UIXCPU Internal Source") 
+//_Attributes System=UIXCPU,Documentation="Output to UI"
+{
+ //_ Object Prototypes
+ Object ( Variant "UIXCPU Internal Source") Input;  //_GUI 30,28
+ //_Attributes Resource=TIMESLICE
+ Object Output( Variant "Output to UI") ;  //_GUI 48,28
+ //_Attributes System=..\X86UI,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output.0 = Input.0;  
+}
+
+Object ( Variant "Output to CPU") Transport( Variant "UIXCPU Internal Source") 
+//_Attributes System=UIXCPU,Documentation="Output to CPU"
+{
+ //_ Object Prototypes
+ Object ( Variant "UIXCPU Internal Source") Input;  //_GUI 30,29
+ //_Attributes Resource=TIMESLICE
+ Object Output( Variant "Output to CPU") ;  //_GUI 47,29
+ //_Attributes System=..\X86CPU,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output.0 = Input.0;  
+}
+
+Object ( Bit VCC) VCC;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit GROUND) GND;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit VCC) VCC;
+//_Attributes System=X86UI,Resource=TIMESLICE
+
+Object ( Bit GROUND) GND;
+//_Attributes System=X86UI,Resource=TIMESLICE
+
+Object ( DWord "(Get) ScrollBar1 Position") Input( Bit Go) ;
+//_Attributes System=X86UI,Resource=TIMESLICE,OnComponent=ScrollBar1,ComponentIndex=33,PropertyName=Position,PropertyType=2
+
+Object ( Bit "ScrollBar1 OnChange Sender") Input;
+//_Attributes System=X86UI,Resource=TIMESLICE,OnComponent=ScrollBar1,ComponentIndex=33,PropertyName=OnChange,PropertyType=9,ParamNumber=0,ParamType=8,ParamName=Sender,OneOf=1
+
+Object Output( DWord "(Set) ScrollBar3 Position") ;
+//_Attributes System=X86UI,Resource=TIMESLICE,OnComponent=ScrollBar3,ComponentIndex=35,PropertyName=Position,PropertyType=2
+
+Object ( Bit Done, DWord Sent) Go;
+//_Attributes System=X86CPU,Resource=TIMESLICE,KeepObject=One side
+
+Object ( Bit Done, Bit Busy, DWord Result) $Spawn
+    ( Bit Go, Bit Wait, DWord Send) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE,KeepObject=One side
+
+Object ( Bit Stopping) Stop( Bit Go, DWord Stop) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE,KeepObject=One side
+
+Object ( Bit ClkG, LSB128 BitsPerStageSG, Bit AClrG) Implementor
+    ( Bit $Clock) 
+//_Attributes System=X86ClkImport
+{
+ //_ Object Prototypes
+ Object ( Bit $Clock) Input;  //_GUI 13,10
+ Object Output( Bit ClkG) ;  //_GUI 51,10
+ //_Attributes Resource=*Global
+ Object Output:A( LSB128 BitsPerStageSG) ;  //_GUI 46,19
+ //_Attributes System=X86CPU,Resource=*GlobalIncludeSystem
+ Object Output:B( Bit AClrG) ;  //_GUI 57,43
+ //_Attributes Resource=*Global
+ Object Text;  //_GUI 16,26,$Clock is a keyword: Viva knows what to do with that. BitsPerStageSG is mostly used in hardware systems to tile out the adders at so many bits per carry chain.
+ Object ( Bit In) Input:A;  //_GUI 19,43
+ //_Attributes Constant="*0"
+ Object ( LSB128 In) Input:B;  //_GUI 14,19
+ //_Attributes System=X86CPU,Constant="*0"
+
+ // Behavior Topology
+ Output.0 = Input.0;  
+ Output:A.0 = Input:B.0;  
+ Output:B.0 = Input:A.0;  
+}
+
+Object ( BIN036 R) MULT18X18S( BIN018 A, BIN018 B
+    , Bit C, Bit CE, Bit R) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Q) RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) 
+//_Attributes System=X86CPU,Resource=TIMESLICE,Documentation="Bit"
+{
+ //_ Object Prototypes
+ Object ( Bit D) Input;  //_GUI 16,11
+ Object ( Bit ClkG) Input:A;  //_GUI 16,14
+ //_Attributes Resource=*Global
+ Object ( Bit EN) Input:B;  //_GUI 16,17
+ //_Attributes Constant="1"
+ Object ( Bit CLR) Input:C;  //_GUI 16,20
+ //_Attributes Constant="0"
+ Object Output( Bit Q) ;  //_GUI 38,12
+ Object ( Bit Q) $RegClr( Bit D, Bit CLK
+    , Bit EN, Bit CLR) ;  //_GUI 24,10
+ //_Attributes System=X86CPU,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output.0 = $RegClr.0;  
+ $RegClr.0 = Input.0;  
+ $RegClr.1 = Input:A.0;  
+ $RegClr.2 = Input:B.0;  
+ $RegClr.3 = Input:C.0;  
+}
+
+Object ( Variant OutA, Variant OutB) $RAMBDP( Variant InA
+    , Variant InB, Variant AddrA, Variant AddrB, Bit ClkG
+    , Bit ClkG, Bit WEA, Bit ENA, Bit WEB
+    , Bit ENB) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Variant Data) $RAMBSP( Variant Data, Variant Addr
+    , Bit ClkG, Bit WE) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit Q) $RegClr( Bit D, Bit CLK
+    , Bit EN, Bit CLR) ;
+//_Attributes System=X86CPU,Resource=TIMESLICE
+
+Object ( Bit GoOne, Bit Done, Bit Busy) GDBW_Clr_1cyc_BWpass
+    ( Bit ClkG, Bit CLR, Bit Go, Bit Wait) 
+//_Attributes System=X86CPU
+{
+ // This GDBW (Go Done Busy Wait) helper object implements the GDBW protocol for use in a single cycle situation and where the Busy Wait chain is desired to be a pass through.
+ //_ Object Prototypes
+ Object ( Bit ClkG) Input;  //_GUI 17,14
+ //_Attributes Resource=*Global
+ Object ( Bit CLR) Input:A;  //_GUI 17,19
+ //_Attributes Constant="0"
+ Object ( Bit Go) Input:B;  //_GUI 16,31
+ Object ( Bit Wait) Input:C;  //_GUI 90,67
+ Object Output( Bit GoOne) ;  //_GUI 86,24
+ Object Output:A( Bit Done) ;  //_GUI 86,34
+ Object Output:B( Bit Busy) ;  //_GUI 16,66
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction
+    ( Bit In0) ;  //_GUI 35,34
+ Object ( Bit Out) AND( Bit In1, Bit In2) ;  //_GUI 74,32
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:A
+    ( Bit In1) ;  //_GUI 35,38
+ Object Text;  //_GUI 46,48,Register the done (High or Low) when we are not waiting.  This way we hold the done state if they start to wait (and can't receive it).
+ Object Text;  //_GUI 84,38,We must drop the done if told to Wait.
+ Object ( Bit Out) AND:A( Bit In1, Bit In2) ;  //_GUI 40,30
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:B
+    ( Bit In2) ;  //_GUI 17,62
+ Object ( Bit Out) INVERT( Bit In1) ;  //_GUI 22,32
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:C
+    ( Bit In0) ;  //_GUI 52,32
+ Object Text;  //_GUI 31,70,An advantage of the GDBW_Clr_1cyc_BWPass object over the GDBW_Clr object is the Busy Wait chain is a pass through which reduces back propigation delay.  The disadvantage is that the Go is not queued on a Wait, but is passed through immediately, causing a stall to the entire Busy Wait chain. If during normal operation, the pipeline is normaly full anyway, there is no advantage to using GDBW_Clr because the Busy Wait must be propigated immediately anyway and the extra logic to queue the Go is not utilized and imposes unnecessary logic level latency.
+ Object ( Bit Q) RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) ;  //_GUI 62,31
+
+ // Behavior Topology
+ Output.0 = Junction:C.0;  //_GUI 53,25
+ Output:A.0 = AND.0;  
+ Output:B.0 = Junction:B.0;  //_GUI 16,63
+ Junction.0 = INVERT.0;  
+ AND.0 = RegClr.0;  
+ AND.1 = Junction:A.2;  //_GUI 74,46, 36,46
+ Junction:A.0 = Junction.2;  
+ AND:A.0 = Input:B.0;  
+ AND:A.1 = Junction.1;  
+ Junction:B.0 = Input:C.0;  //_GUI 94,63
+ INVERT.0 = Junction:B.1;  //_GUI 18,35
+ Junction:C.0 = AND:A.0;  
+ RegClr.0 = Junction:C.1;  
+ RegClr.1 = Input.0;  //_GUI 59,36, 59,15
+ RegClr.2 = Junction:A.1;  
+ RegClr.3 = Input:A.0;  //_GUI 56,42, 56,20
+}
+
+Object ( BIN034 R, Bit PipeLen, Bit ClkG
+    , Bit AClr, Bit Done, Bit Busy) $Mul_Pipe( BIN017 A
+    , BIN017 B, Bit ClkG, Bit AClr, Bit Go
+    , Bit Wait) 
+//_Attributes System=X86CPU,Documentation="BIN017/BIN017"
+{
+ //_ Object Prototypes
+ Object ( BIN017 A) Input;  //_GUI 11,33
+ Object ( BIN017 B) Input:A;  //_GUI 11,43
+ Object ( Bit ClkG) Input:B;  //_GUI 27,63
+ //_Attributes Resource=*Global
+ Object ( Bit AClr) Input:C;  //_GUI 27,66
+ //_Attributes Constant="0"
+ Object ( Bit Go) Input:D;  //_GUI 27,80
+ Object ( Bit Wait) Input:E;  //_GUI 96,91
+ //_Attributes Constant="0"
+ Object Output( BIN034 R) ;  //_GUI 156,39
+ Object Output:A( Bit PipeLen) ;  //_GUI 98,60
+ Object Output:B( Bit ClkG) ;  //_GUI 98,63
+ Object Output:C( Bit AClr) ;  //_GUI 98,66
+ Object Output:D( Bit Done) ;  //_GUI 98,80
+ Object Output:E( Bit Busy) ;  //_GUI 28,89
+ Object ( Bit In) Input:F;  //_GUI 92,60
+ //_Attributes Constant="*0"
+ Object ( BIN036 P) MULT18X18S( BIN018 A, BIN018 B
+    , Bit C, Bit CE, Bit R) ;  //_GUI 69,37
+ //_Attributes System=X86CPU,Documentation="bus"
+ Object ( Bit SignBit) Input:G;  //_GUI 11,40
+ //_Attributes Constant="*0"
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction
+    ( Bit In0) ;  //_GUI 62,63
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:A
+    ( Bit In0) ;  //_GUI 68,66
+ Object Text;  //_GUI 84,45,If Wait comes in, multiplier holds result from unreported Done.
+ Object ( Bit GoOne, Bit Done, Bit Busy) GDBW_Clr_1cyc_BWpass
+    ( Bit ClkG, Bit CLR, Bit Go, Bit Wait) ;  //_GUI 38,73
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:B
+    ( Bit In0) ;  //_GUI 33,66
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:C
+    ( Bit In0) ;  //_GUI 37,63
+ Object Text;  //_GUI 134,60,Actually the MULT18X18S's internal register has a synchronous clear rather than an asynchronous clear.  The AClr input infers the asynchronous clear even though this instance implements the clear with synchronous logic.  This inconsistancy will be fine for almost all aplications.  If you really need an asynchronous clear, use the unregistered version of the MULT18X18, put a RegisterClr after it and eliminate the GDBW_Clr_1cyc_BWpass object.  This will implement the asynchronous clear but will run at a slower speed.
+ Object ( BIN018 Out1) $Cast( Variant Data, BIN018 Type) ;  //_GUI 46,27
+ Object ( Variant Out1, Variant Out2) VariantIn( Variant In) ;  //_GUI 101,35
+ Object ( Variant Out) VariantOut( Variant In1, Variant In2) ;  //_GUI 31,29
+ Object ( Variant Out) VariantOut:A( Variant In1, Variant In2) ;  //_GUI 31,39
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:D
+    ( Bit In0) ;  //_GUI 24,40
+ Object ( BIN018 Out1) $Cast:A( Variant Data, BIN018 Type) ;  //_GUI 46,37
+ Object ( MSB036 Out1) $Cast:B( BIN036 Data, MSB036 Type) ;  //_GUI 86,35
+ Object ( Variant Out1, Variant Out2) VariantIn:A( Variant In) ;  //_GUI 120,37
+ Object ( BIN034 Out1) $Cast:C( Variant Data, BIN034 Type) ;  //_GUI 142,37
+
+ // Behavior Topology
+ Output.0 = $Cast:C.0;  
+ Output:A.0 = Input:F.0;  
+ Output:B.0 = Junction.1;  
+ Output:C.0 = Junction:A.1;  
+ Output:D.0 = GDBW_Clr_1cyc_BWpass.1;  
+ Output:E.0 = GDBW_Clr_1cyc_BWpass.2;  //_GUI 28,84
+ MULT18X18S.0 = $Cast.0;  //_GUI 66,39, 66,30
+ MULT18X18S.1 = $Cast:A.0;  //_GUI 62,42, 62,40
+ MULT18X18S.2 = Junction.0;  //_GUI 63,45
+ MULT18X18S.3 = GDBW_Clr_1cyc_BWpass.0;  //_GUI 66,48, 66,76
+ MULT18X18S.4 = Junction:A.0;  
+ Junction.0 = Junction:C.1;  
+ Junction:A.0 = Junction:B.1;  
+ GDBW_Clr_1cyc_BWpass.0 = Junction:C.2;  
+ GDBW_Clr_1cyc_BWpass.1 = Junction:B.2;  //_GUI 34,78
+ GDBW_Clr_1cyc_BWpass.2 = Input:D.0;  
+ GDBW_Clr_1cyc_BWpass.3 = Input:E.0;  //_GUI 100,84
+ Junction:B.0 = Input:C.0;  
+ Junction:C.0 = Input:B.0;  
+ $Cast.0 = VariantOut.0;  
+ VariantIn.0 = $Cast:B.0;  
+ VariantOut.0 = Input.0;  
+ VariantOut.1 = Junction:D.0;  //_GUI 25,31
+ VariantOut:A.0 = Input:A.0;  
+ VariantOut:A.1 = Junction:D.1;  
+ Junction:D.0 = Input:G.0;  
+ $Cast:A.0 = VariantOut:A.0;  
+ $Cast:B.0 = MULT18X18S.0;  
+ VariantIn:A.0 = VariantIn.0;  
+ $Cast:C.0 = VariantIn:A.0;  
+}
+
+Object ( BIN036 R, Bit PipeLen, Bit ClkG
+    , Bit AClr, Bit Done, Bit Busy) $Mul_Twos_Pipe( BIN018 A
+    , BIN018 B, Bit ClkG, Bit AClr, Bit Go
+    , Bit Wait) 
+//_Attributes System=X86CPU,Documentation="BIN018/BIN018"
+{
+ //_ Object Prototypes
+ Object ( BIN018 A) Input;  //_GUI 12,29
+ Object ( BIN018 B) Input:A;  //_GUI 12,32
+ Object ( Bit ClkG) Input:B;  //_GUI 10,54
+ //_Attributes Resource=*Global
+ Object ( Bit AClr) Input:C;  //_GUI 10,57
+ //_Attributes Constant="0"
+ Object ( Bit Go) Input:D;  //_GUI 10,71
+ Object ( Bit Wait) Input:E;  //_GUI 79,82
+ //_Attributes Constant="0"
+ Object Output( BIN036 R) ;  //_GUI 72,30
+ Object Output:A( Bit PipeLen) ;  //_GUI 81,51
+ Object Output:B( Bit ClkG) ;  //_GUI 81,54
+ Object Output:C( Bit AClr) ;  //_GUI 81,57
+ Object Output:D( Bit Done) ;  //_GUI 81,71
+ Object Output:E( Bit Busy) ;  //_GUI 11,80
+ Object ( Bit In) Input:F;  //_GUI 75,51
+ //_Attributes Constant="*0"
+ Object ( BIN036 P) MULT18X18S( BIN018 A, BIN018 B
+    , Bit C, Bit CE, Bit R) ;  //_GUI 52,28
+ //_Attributes System=X86CPU,Resource=TIMESLICE,Documentation="bus"
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction
+    ( Bit In0) ;  //_GUI 45,54
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:A
+    ( Bit In0) ;  //_GUI 51,57
+ Object Text;  //_GUI 67,36,If Wait comes in, multiplier holds result from unreported Done.
+ Object ( Bit GoOne, Bit Done, Bit Busy) GDBW_Clr_1cyc_BWpass
+    ( Bit ClkG, Bit CLR, Bit Go, Bit Wait) ;  //_GUI 21,64
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:B
+    ( Bit In0) ;  //_GUI 16,57
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:C
+    ( Bit In0) ;  //_GUI 20,54
+ Object Text;  //_GUI 99,27,Actually the MULT18X18S's internal register has a synchronous clear rather than an asynchronous clear.  The AClr input infers the asynchronous clear even though this instance implements the clear with synchronous logic.  This inconsistancy will be fine for almost all aplications.  If you really need an asynchronous clear, use the unregistered version of the MULT18X18, put a RegisterClr after it and eliminate the GDBW_Clr_1cyc_BWpass object.  This will implement the asynchronous clear but will run at a slower speed.
+
+ // Behavior Topology
+ Output.0 = MULT18X18S.0;  
+ Output:A.0 = Input:F.0;  
+ Output:B.0 = Junction.1;  
+ Output:C.0 = Junction:A.1;  
+ Output:D.0 = GDBW_Clr_1cyc_BWpass.1;  
+ Output:E.0 = GDBW_Clr_1cyc_BWpass.2;  //_GUI 11,75
+ MULT18X18S.0 = Input.0;  
+ MULT18X18S.1 = Input:A.0;  
+ MULT18X18S.2 = Junction.0;  //_GUI 46,36
+ MULT18X18S.3 = GDBW_Clr_1cyc_BWpass.0;  //_GUI 49,39, 49,67
+ MULT18X18S.4 = Junction:A.0;  
+ Junction.0 = Junction:C.1;  
+ Junction:A.0 = Junction:B.1;  
+ GDBW_Clr_1cyc_BWpass.0 = Junction:C.2;  
+ GDBW_Clr_1cyc_BWpass.1 = Junction:B.2;  //_GUI 17,69
+ GDBW_Clr_1cyc_BWpass.2 = Input:D.0;  
+ GDBW_Clr_1cyc_BWpass.3 = Input:E.0;  //_GUI 83,75
+ Junction:B.0 = Input:C.0;  
+ Junction:C.0 = Input:B.0;  
+}
+
+Object ( Bit Q) RegEn( Bit D, Bit ClkG
+    , Bit EN) 
+//_Attributes System=X86CPU
+{
+ //_ Object Prototypes
+ Object ( Bit D) Input;  //_GUI 23,20
+ Object ( Bit ClkG) Input:A;  //_GUI 23,23
+ //_Attributes Resource=*Global
+ Object ( Bit EN) Input:B;  //_GUI 23,26
+ //_Attributes Constant="1"
+ Object Output( Bit Q) ;  //_GUI 47,21
+ Object ( Bit CLR) Input:C;  //_GUI 23,29
+ //_Attributes Constant="*0"
+ Object ( Bit Q) $RegClr( Bit D, Bit ClkG
+    , Bit EN, Bit CLR) ;  //_GUI 32,19
+ //_Attributes System=X86CPU,Resource=TIMESLICE
+
+ // Behavior Topology
+ Output.0 = $RegClr.0;  
+ $RegClr.0 = Input.0;  
+ $RegClr.1 = Input:A.0;  
+ $RegClr.2 = Input:B.0;  
+ $RegClr.3 = Input:C.0;  
+}
+
+System "X86(Attributes)"
+//_Attributes 1,Resource=Default
+// DefaultInputWidget=ScrollBar
+// DefaultOutputWidget=ScrollBar
+// WidgetSystem=X86UI
+// WidgetResource=TIMESLICE
+// DefaultTargetSystem=X86CPU
+// ResourceData=ResourceData_X86sd.txt
+// Word=111
+// First=123
+// Second="$First"
+// Seventh="$BaseSystem:Sixth"
+// SystemAtt=X86UI
+// WidgetAtt=SpinEdit
+{
+ System X86CPU
+ //_Attributes 2,Resource=X86Main
+ // Word=222
+ // Third="$Second"
+ // Fifth="$BaseSystem:Fourth"
+ {
+  // This system has all the primitive executions for doing the x86-side execution.
+ }
+ System X86UI
+ //_Attributes 3,Resource=X86UI
+ {
+  // COM objects and widgets run in this system.
+ }
+ System UIXCPU
+ //_Attributes 7,Resource=UIBus
+ {
+ }
+ System X86ClkImport
+ //_Attributes 6,Resource=UIBus
+ {
+  // Resource on this one is unused.
+ }
+}

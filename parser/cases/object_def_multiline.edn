@@ -1,1 +1,4 @@
-(:Object "MULT18X18S" [("BIN018" "A") ("BIN018" "B") ("Bit" "C") ("Bit" "CE") ("Bit" "R")] [("BIN036" "R")] {:System "X86CPU" :Resource "TIMESLICE"})
+(:Object "MULT18X18S"
+         [("BIN018" "A") ("BIN018" "B") ("Bit" "C") ("Bit" "CE") ("Bit" "R")]
+         [("BIN036" "R")]
+         {:System "X86CPU" :Resource "TIMESLICE"})
