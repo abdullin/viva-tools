@@ -1,2 +1,6 @@
-(:Object "StripWholeLSB" [("List" "In1")] [("List" "WholeLSB") ("List" "Out2")]
-         {:TreeGroup "BotControl"})
+(:Object "StripWholeLSB"
+         [("List" "In1")]
+         [("List" "WholeLSB") ("List" "Out2")]
+         {:TreeGroup "BotControl"
+          "prototypes"
+          [(:Object "Input" [] [("List" "In1")] [(24 32)]) (:Object "Output" [("List" "WholeLSB")] [] [(88 31)]) (:Object "Output:A" [("List" "Out2")] [] [(88 40)]) (:Object "ListIn" [("List" "In")] [("Variant" "Out1") ("Variant" "Out2")] [(29 30)]) (:Object "ListOut" [("Variant" "In1") ("Variant" "In2")] [("List" "Out")] [(73 38)]) (:Object "ListOut:A" [("Variant" "In1") ("Variant" "In2")] [("List" "Out")] [(74 29)]) (:Object "StripWholeLSB" [("Variant" "In1")] [("Variant" "WholeLSB") ("Variant" "Out2")] [(47 38)]) (:Object "StripWholeLSB:A" [("Variant" "In1")] [("Variant" "WholeLSB") ("Variant" "Out2")] [(47 29)])]})

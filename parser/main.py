@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from collections import defaultdict
+
 import click
 import edn_format
 import os
@@ -45,7 +47,11 @@ def main(create_missing):
 
             for (l, p) in zip(loaded_edn, parsed_edn):
                 #print(edn_format.dumps(p))
-                parsed_typed = edn_format.loads(edn_format.dumps(p))
+                try:
+                    parsed_typed = edn_format.loads(edn_format.dumps(p))
+                except:
+                    print(edn_format.dumps(p))
+                    raise
                 delta = dd.DeepDiff(l, parsed_typed)
 
                 if delta:
@@ -54,11 +60,15 @@ def main(create_missing):
 
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
-obj_def = re.compile("Object \((.+?)\)(.+?)\(([.\n,\w\W]+?)\)[\s;]*//_ Attributes\s(.*)", re.MULTILINE)
+obj_def = re.compile("Object (\((?P<outputs>.+?)\))?(?P<name>.+?)(\((?P<inputs>[.\n,\w\W]+?)\))?[\s;]+(//_(?P<attributes>.*))?", re.MULTILINE)
 
 def extract_pairs(line: str):
-    pairs = line.strip().split(",")
+    if not line:
+        return []
+    clean = line.strip()
     result = []
+
+    pairs = clean.split(",")
     for p in pairs:
         pair = p.strip().split(" ")
         if len(pair)!=2:
@@ -66,24 +76,48 @@ def extract_pairs(line: str):
         result.append((pair[0].strip(), pair[1].strip()))
     return result
 
+def extract_attributes(text:str):
+    if not text:
+        return None
+    text = text.strip()
+
+    if text.startswith("Attributes"):
+        attrs = {}
+        pairs = text[10:].strip().split(',')
+
+
+        for pair in pairs:
+            ps = pair.split("=")
+            attrs[edn_format.Keyword(ps[0].strip())] = ps[1].strip('" ')
+        return attrs
+
+    if text.startswith('GUI'):
+        coords = []
+        pairs = text[3:].strip().split(', ')
+        for pair in pairs:
+            ps = pair.split(',')
+            coords.append((int(ps[0]), int(ps[1])))
+        return coords
+
+
+    raise ValueError(text)
+
 def parse_object_def(l, body):
 
 
-    print(l)
-    sep()
-    print(body)
-
     m = obj_def.search(l)
 
-    nam = m.group(2).strip()
-    outputs = extract_pairs(m.group(1))
-    inputs = extract_pairs(m.group(3))
+    try:
 
-    attr_pairs = m.group(4).split(',')
-    attrs = {}
-    for pair in attr_pairs:
-        ps = pair.split("=")
-        attrs[edn_format.Keyword(ps[0].strip())] = ps[1].strip('" ')
+        nam = m.group('name').strip()
+        outputs = extract_pairs(m.group('outputs'))
+        inputs = extract_pairs(m.group('inputs'))
+        attrs = extract_attributes(m.group('attributes'))
+    except:
+        print(f"Problem parsing: {l}")
+        raise
+
+
 
     data = (
         edn_format.Keyword("Object"),
@@ -92,6 +126,11 @@ def parse_object_def(l, body):
         outputs,
         attrs,
     )
+
+    if body:
+        prototypes = [parse_object_def(x, None) for x in body['proto']]
+        if prototypes:
+            attrs['prototypes'] = prototypes
 
     return data
 
@@ -148,24 +187,34 @@ def parse_text(name):
             continue
 
         if l.startswith("Object "):
-            behavior_started = False
+
+            body = defaultdict(list)
+            body_section = None
             declaration = ""
-            body = ""
 
             for l in lines[i:]:
+                s = l.strip()
 
                 i+=1
                 if l.startswith("{"):
-                    behavior_started = True
+                    body_section = 'doc'
                     continue
-                if behavior_started and l == "}":
+                if s == "//_ Object Prototypes":
+                    body_section = 'proto'
+                    continue
+                if s == "//_ Behavior Topology":
+                    body_section = 'behavior'
+                    continue
+                if body_section and l == "}":
                     break
-                if not behavior_started and l.endswith(";"):
+                if not body_section and l.endswith(";"):
                     break
 
 
-                if behavior_started:
-                    body += l
+                if body_section:
+                    clean = l.strip()
+                    if clean:
+                        body[body_section].append(clean)
                 else:
                     declaration += l
 
