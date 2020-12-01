@@ -1,1 +1,1 @@
-(:Object "INVERT" [("Bit" "In1")] [("Bit" "Out1")] {:System "X86CPU" :Resource "TIMESLICE"})
+(:proto "INVERT" [("Bit" "In1")] [("Bit" "Out1")] {:System "X86CPU" :Resource "TIMESLICE"})

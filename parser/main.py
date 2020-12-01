@@ -81,8 +81,9 @@ def extract_attributes(text:str):
         return None
     text = text.strip()
 
+    attrs = {}
+
     if text.startswith("Attributes"):
-        attrs = {}
         pairs = text[10:].strip().split(',')
 
 
@@ -97,7 +98,8 @@ def extract_attributes(text:str):
         for pair in pairs:
             ps = pair.split(',')
             coords.append((int(ps[0]), int(ps[1])))
-        return coords
+        attrs[edn_format.Keyword("gui")] = coords
+        return attrs
 
 
     raise ValueError(text)
@@ -117,22 +119,23 @@ def parse_object_def(l, body):
         print(f"Problem parsing: {l}")
         raise
 
-
-
     data = (
-        edn_format.Keyword("Object"),
+        edn_format.Keyword("proto"),
         nam,
         inputs,
         outputs,
         attrs,
     )
+    if not body:
+        return data
 
-    if body:
-        prototypes = [parse_object_def(x, None) for x in body['proto']]
-        if prototypes:
-            attrs['prototypes'] = prototypes
 
-    return data
+    prototypes = [parse_object_def(x, None) for x in body['proto']]
+    return (
+        edn_format.Keyword("object"),
+        data,
+        prototypes,
+    )
 
 
 def parse_dataset(l):

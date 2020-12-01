@@ -1,0 +1,17 @@
+(:object
+  (:proto "StripWholeLSB" [("List" "In1")] [("List" "WholeLSB") ("List" "Out2")] {:TreeGroup "BotControl"})
+  [(:proto "Input" [] [("List" "In1")] {:gui [(24 32)]})
+   (:proto "Output" [("List" "WholeLSB")] [] [(88 31)])
+   (:proto "Output:A" [("List" "Out2")] [] [(88 40)])
+   (:proto "ListIn" [("List" "In")] [("Variant" "Out1") ("Variant" "Out2")] [(29 30)])
+   (:proto "ListOut" [("Variant" "In1") ("Variant" "In2")] [("List" "Out")] [(73 38)])
+   (:proto "ListOut:A" [("Variant" "In1") ("Variant" "In2")] [("List" "Out")] [(74 29)])
+   (:proto "StripWholeLSB" [("Variant" "In1")] [("Variant" "WholeLSB") ("Variant" "Out2")] [(47 38)])
+   (:proto "StripWholeLSB:A" [("Variant" "In1")] [("Variant" "WholeLSB") ("Variant" "Out2")] [(47 29)])
+   (:conn "Output.0" "ListOut:A.0")
+   (:conn "Output:A.0" "ListOut.0")
+
+
+   ]
+
+  )
