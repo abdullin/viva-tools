@@ -62,6 +62,7 @@ def main(create_missing):
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
 obj_def = re.compile("Object (\((?P<outputs>.+?)\))?(?P<name>.+?)(\((?P<inputs>[.\n,\w\W]+?)\))?[\s;]+(//_(?P<attributes>.*))?", re.MULTILINE)
 
+
 def extract_pairs(line: str):
     if not line:
         return []
@@ -78,7 +79,7 @@ def extract_pairs(line: str):
 
 def extract_attributes(text:str):
     if not text:
-        return None
+        return {}
     text = text.strip()
 
     attrs = {}
@@ -104,8 +105,25 @@ def extract_attributes(text:str):
 
     raise ValueError(text)
 
-def parse_object_def(l, body):
+net = re.compile("(?P<left>.+)( = )(?P<right>.+);(\s*//_(?P<attributes>.*))?")
+def parse_transport_def(text):
+    m = net.search(text)
+    if not m:
+        raise ValueError(f"Unexpected net: {text}")
 
+    return (
+        edn_format.Keyword("net"),
+
+        m.group('left'),
+        m.group('right'),
+        extract_attributes(m.group('attributes'))
+
+    )
+
+
+
+
+def parse_object_def(l, body):
 
     m = obj_def.search(l)
 
@@ -131,10 +149,11 @@ def parse_object_def(l, body):
 
 
     prototypes = [parse_object_def(x, None) for x in body['proto']]
+    net = [parse_transport_def(x) for x in body['behavior']]
     return (
         edn_format.Keyword("object"),
         data,
-        prototypes,
+        prototypes + net
     )
 
 
