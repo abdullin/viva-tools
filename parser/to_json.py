@@ -17,6 +17,9 @@ def proto_to_dict(x: Proto) -> Dict:
     return p
 
 
+def text_to_dict(x: Text) -> Dict:
+    return { 'kind': 'text', 'gui': (x.gui.x, x.gui.y), 'text': x.text }
+
 def write_file(output: str, p: File):
     with open(output, 'w') as w:
 
@@ -48,6 +51,7 @@ def write_file(output: str, p: File):
             p = {
                 'kind': 'obj',
                 'proto': proto_to_dict(x.proto),
+                'texts': [text_to_dict(x) for x in x.texts],
                 'behavior': [proto_to_dict(x) for x in x.behavior]
             }
             json.dump(p, w)

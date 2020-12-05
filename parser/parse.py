@@ -5,7 +5,7 @@ from typing import Optional, List, Tuple
 from dto import *
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
-obj_def = re.compile("Object (\((?P<outputs>.+?)\))?(?P<name>.+?)(\((?P<inputs>[.\n,\w\W]+?)\))?[\s;]+(//_(?P<attributes>.*))?", re.MULTILINE)
+obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>"]+)\s*(\((?P<inputs>[\n\w\s,]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
 
 
 def extract_pairs(line: str):
@@ -38,6 +38,10 @@ def extract_attributes(text:str):
 
     for pair in pairs:
         ps = pair.split("=")
+        if len(ps) == 1:
+            attrs[ps[0].strip()] = True
+            continue
+
         attrs[ps[0].strip()] = ps[1].strip('" ')
     return attrs
 
@@ -84,8 +88,11 @@ def parse_proto(l:str) -> Proto:
         gui = extract_attr_gui(m.group('attributes'))
         attrs = extract_attributes(m.group('attributes'))
     except:
-        print(f"Problem parsing proto: {l}")
+        print(f"Problem parsing proto: <{l}>")
         raise
+
+    if nam == "(":
+        raise ValueError(l)
 
 
     if gui:

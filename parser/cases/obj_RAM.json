@@ -1,0 +1,655 @@
+{
+  "kind": "obj",
+  "proto": {
+    "kind": "proto",
+    "name": "RAM",
+    "inputs": [
+      [
+        "Variant",
+        "Data"
+      ],
+      [
+        "Variant",
+        "Addr"
+      ],
+      [
+        "Bit",
+        "WE"
+      ],
+      [
+        "Bit",
+        "ClkG"
+      ],
+      [
+        "Bit",
+        "Go"
+      ],
+      [
+        "Bit",
+        "Wait"
+      ]
+    ],
+    "outputs": [
+      [
+        "Variant",
+        "O"
+      ],
+      [
+        "Bit",
+        "Done"
+      ],
+      [
+        "Bit",
+        "Busy"
+      ]
+    ],
+    "attrs": {
+      "TreeGroup": "CoreLib\\\\Memory"
+    }
+  },
+  "texts": [
+    {
+      "kind": "text",
+      "gui": [
+        50,
+        9
+      ],
+      "text": "Register the Address \non a Read to be used \nif a Wait comes on."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        75,
+        3
+      ],
+      "text": "If waiting, then switch the RAM's \naddress to the stored address, \nso if a read  Done is pending, we \nwill continue reading from the \nsame address."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        107,
+        12
+      ],
+      "text": "Only write when Go, \nWE and not Busy."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        146,
+        66
+      ],
+      "text": "A Wait will keep a \nRead or a Write from \nstarting, but only a \nRead from completing."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        160,
+        27
+      ],
+      "text": "Dones only come \nout after a Read."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        132,
+        10
+      ],
+      "text": "Reads and writes \nare synchronous."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        38,
+        61
+      ],
+      "text": "Don't need to store the \nGo on a write because \nwe don't need to send \nout a Done on a write."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        73,
+        60
+      ],
+      "text": "The Mux won't effect writes (it \nwill be a passthrough) because \nwrites will only occur when we \nare not Busy which is the same \nas when we are not Waiting for \nthe RegOnGo object."
+    },
+    {
+      "kind": "text",
+      "gui": [
+        160,
+        12
+      ],
+      "text": "O is valid while \nDone is high."
+    }
+  ],
+  "behavior": [
+    {
+      "kind": "proto",
+      "name": "Input",
+      "inputs": [],
+      "outputs": [
+        [
+          "Variant",
+          "Data"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        15,
+        18
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Input:A",
+      "inputs": [],
+      "outputs": [
+        [
+          "Variant",
+          "Addr"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        15,
+        25
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Input:B",
+      "inputs": [],
+      "outputs": [
+        [
+          "Bit",
+          "WE"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        15,
+        45
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Input:C",
+      "inputs": [],
+      "outputs": [
+        [
+          "Bit",
+          "ClkG"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        15,
+        49
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Input:D",
+      "inputs": [],
+      "outputs": [
+        [
+          "Bit",
+          "Go"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        15,
+        53
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Input:E",
+      "inputs": [],
+      "outputs": [
+        [
+          "Bit",
+          "Wait"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        160,
+        61
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Output",
+      "inputs": [
+        [
+          "Variant",
+          "O"
+        ]
+      ],
+      "outputs": [],
+      "attrs": {},
+      "gui": [
+        164,
+        21
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Output:A",
+      "inputs": [
+        [
+          "Bit",
+          "Done"
+        ]
+      ],
+      "outputs": [],
+      "attrs": {},
+      "gui": [
+        164,
+        34
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Output:B",
+      "inputs": [
+        [
+          "Bit",
+          "Busy"
+        ]
+      ],
+      "outputs": [],
+      "attrs": {},
+      "gui": [
+        16,
+        63
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "RAMSP",
+      "inputs": [
+        [
+          "Variant",
+          "Data"
+        ],
+        [
+          "Variant",
+          "Addr"
+        ],
+        [
+          "Bit",
+          "ClkG"
+        ],
+        [
+          "Bit",
+          "WE"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "Data"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        135,
+        19
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "RegOnGo",
+      "inputs": [
+        [
+          "Variant",
+          "D"
+        ],
+        [
+          "Bit",
+          "ClkG"
+        ],
+        [
+          "Bit",
+          "AClr"
+        ],
+        [
+          "Bit",
+          "Go"
+        ],
+        [
+          "Bit",
+          "Wait"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "Q"
+        ],
+        [
+          "Bit",
+          "ClkG"
+        ],
+        [
+          "Bit",
+          "AClr"
+        ],
+        [
+          "Bit",
+          "Done"
+        ],
+        [
+          "Bit",
+          "Busy"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        59,
+        24
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "AND",
+      "inputs": [
+        [
+          "Bit",
+          "In1"
+        ],
+        [
+          "Bit",
+          "In2"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        47,
+        32
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Mux",
+      "inputs": [
+        [
+          "Variant",
+          "A"
+        ],
+        [
+          "Variant",
+          "B"
+        ],
+        [
+          "Bit",
+          "S"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "O"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        80,
+        21
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Junction",
+      "inputs": [
+        [
+          "Variant",
+          "In0"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "Out1"
+        ],
+        [
+          "Variant",
+          "Out2"
+        ],
+        [
+          "Variant",
+          "Out3"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        54,
+        25
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "INVERT",
+      "inputs": [
+        [
+          "Bit",
+          "In1"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        35,
+        31
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Junction:A",
+      "inputs": [
+        [
+          "Bit",
+          "In2"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out1"
+        ],
+        [
+          "Bit",
+          "Out2"
+        ],
+        [
+          "Bit",
+          "Out3"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        76,
+        37
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "AND:A",
+      "inputs": [
+        [
+          "Variant",
+          "In1"
+        ],
+        [
+          "Variant",
+          "In2"
+        ],
+        [
+          "Variant",
+          "In3"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "Out1"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        117,
+        25
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "INVERT:A",
+      "inputs": [
+        [
+          "Bit",
+          "In1"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        105,
+        24
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Junction:B",
+      "inputs": [
+        [
+          "Bit",
+          "In0"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out1"
+        ],
+        [
+          "Bit",
+          "Out2"
+        ],
+        [
+          "Bit",
+          "Out3"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        33,
+        53
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Junction:C",
+      "inputs": [
+        [
+          "Bit",
+          "In0"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out1"
+        ],
+        [
+          "Bit",
+          "Out2"
+        ],
+        [
+          "Bit",
+          "Out3"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        29,
+        45
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Junction:D",
+      "inputs": [
+        [
+          "Bit",
+          "In0"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out1"
+        ],
+        [
+          "Bit",
+          "Out2"
+        ],
+        [
+          "Bit",
+          "Out3"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        25,
+        49
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Junction:E",
+      "inputs": [
+        [
+          "Bit",
+          "In1"
+        ]
+      ],
+      "outputs": [
+        [
+          "Bit",
+          "Out1"
+        ],
+        [
+          "Bit",
+          "Out2"
+        ],
+        [
+          "Bit",
+          "Out3"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        56,
+        57
+      ]
+    }
+  ]
+}
