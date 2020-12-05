@@ -7,6 +7,10 @@ import os
 import re
 import deepdiff as dd
 
+from dto import *
+from parse import parse_text
+from to_edn import to_edn
+
 
 def sep():
     print("=" * 80)
@@ -25,7 +29,8 @@ def main(create_missing):
                 continue
             output = base + ".edn"
             print(output)
-            parsed_edn = parse_text(input)
+            data = parse_text(input)
+            parsed_edn = to_edn(data)
 
 
             if not os.path.exists(output):
@@ -46,7 +51,6 @@ def main(create_missing):
                 loaded_edn = edn_format.loads_all(out_text)
 
             for (l, p) in zip(loaded_edn, parsed_edn):
-                #print(edn_format.dumps(p))
                 try:
                     parsed_typed = edn_format.loads(edn_format.dumps(p))
                 except:
@@ -57,197 +61,11 @@ def main(create_missing):
                 if delta:
                     print("Mismatch")
                     print(delta)
-
-
-ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
-obj_def = re.compile("Object (\((?P<outputs>.+?)\))?(?P<name>.+?)(\((?P<inputs>[.\n,\w\W]+?)\))?[\s;]+(//_(?P<attributes>.*))?", re.MULTILINE)
-
-
-def extract_pairs(line: str):
-    if not line:
-        return []
-    clean = line.strip()
-    result = []
-
-    pairs = clean.split(",")
-    for p in pairs:
-        pair = p.strip().split(" ")
-        if len(pair)!=2:
-            raise ValueError(f"problem splitting pairs from '{line}'")
-        result.append((pair[0].strip(), pair[1].strip()))
-    return result
-
-def extract_attributes(text:str):
-    if not text:
-        return {}
-    text = text.strip()
-
-    attrs = {}
-
-    if text.startswith("Attributes"):
-        pairs = text[10:].strip().split(',')
-
-
-        for pair in pairs:
-            ps = pair.split("=")
-            attrs[edn_format.Keyword(ps[0].strip())] = ps[1].strip('" ')
-        return attrs
-
-    if text.startswith('GUI'):
-        coords = []
-        pairs = text[3:].strip().split(', ')
-        for pair in pairs:
-            ps = pair.split(',')
-            coords.append((int(ps[0]), int(ps[1])))
-        attrs[edn_format.Keyword("gui")] = coords
-        return attrs
-
-
-    raise ValueError(text)
-
-net = re.compile("(?P<left>.+)( = )(?P<right>.+);(\s*//_(?P<attributes>.*))?")
-def parse_transport_def(text):
-    m = net.search(text)
-    if not m:
-        raise ValueError(f"Unexpected net: {text}")
-
-    return (
-        edn_format.Keyword("net"),
-
-        m.group('left'),
-        m.group('right'),
-        extract_attributes(m.group('attributes'))
-
-    )
+                    print("Expect: " + edn_format.dumps(l))
+                    print("Parsed: " + edn_format.dumps(p))
 
 
 
-
-def parse_object_def(l, body):
-
-    m = obj_def.search(l)
-
-    try:
-
-        nam = m.group('name').strip()
-        outputs = extract_pairs(m.group('outputs'))
-        inputs = extract_pairs(m.group('inputs'))
-        attrs = extract_attributes(m.group('attributes'))
-    except:
-        print(f"Problem parsing: {l}")
-        raise
-
-    data = (
-        edn_format.Keyword("proto"),
-        nam,
-        inputs,
-        outputs,
-        attrs,
-    )
-    if not body:
-        return data
-
-
-    prototypes = [parse_object_def(x, None) for x in body['proto']]
-    net = [parse_transport_def(x) for x in body['behavior']]
-    return (
-        edn_format.Keyword("object"),
-        data,
-        prototypes + net
-    )
-
-
-def parse_dataset(l):
-    m = ds.search(l)
-
-    args = [x.strip() for x in m.group(2).strip().split(",")]
-    attribs = [x.strip() for x in m.group(3).strip().split(",")]
-
-    attr_dict = {}
-
-    if (len(attribs) > 0):
-        ctx = int(attribs[0])
-        attr_dict[edn_format.Keyword("context")] = ctx
-    if (len(attribs) >= 2):
-        val = int(attribs[1])
-        if val != 0:
-            attr_dict[edn_format.Keyword("color")] = val
-    if (len(attribs) >= 3):
-        val = attribs[2].split("\\")
-        attr_dict[edn_format.Keyword("tree")] = val
-
-    if (len(attribs) >= 4):
-        val = attribs[3]
-        attr_dict[edn_format.Keyword("com")] = int(val)
-
-    name = m.group(1).strip(' "')
-
-    data = (
-        edn_format.Keyword("DataSet"),
-        name,
-        args,
-        attr_dict
-    )
-
-    return data
-
-
-def parse_text(name):
-    with open(name) as f:
-        lines = f.readlines()
-
-    file = []
-
-    i = 0
-    while i < len(lines):
-        l = lines[i].strip("\r\n")
-
-        if l.startswith("DataSet"):
-            data = parse_dataset(lines[i])
-            i += 1
-            file.append(data)
-            continue
-
-        if l.startswith("Object "):
-
-            body = defaultdict(list)
-            body_section = None
-            declaration = ""
-
-            for l in lines[i:]:
-                s = l.strip()
-
-                i+=1
-                if l.startswith("{"):
-                    body_section = 'doc'
-                    continue
-                if s == "//_ Object Prototypes":
-                    body_section = 'proto'
-                    continue
-                if s == "//_ Behavior Topology":
-                    body_section = 'behavior'
-                    continue
-                if body_section and l == "}":
-                    break
-                if not body_section and l.endswith(";"):
-                    break
-
-
-                if body_section:
-                    clean = l.strip()
-                    if clean:
-                        body[body_section].append(clean)
-                else:
-                    declaration += l
-
-
-            data = parse_object_def(declaration, body)
-            file.append(data)
-            continue
-
-
-        raise ValueError("Unknown line", l)
-    return file
 
 
 if __name__ == "__main__":
