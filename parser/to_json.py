@@ -20,6 +20,10 @@ def proto_to_dict(x: Proto) -> Dict:
 def text_to_dict(x: Text) -> Dict:
     return { 'kind': 'text', 'gui': (x.gui.x, x.gui.y), 'text': x.text }
 
+def net_to_dict(x: Transport) -> Dict:
+    guis = [(x.x, x.y) for x in x.gui]
+    return {'kind':'net', 'input':x.input, 'output':x.output, 'gui': guis}
+
 def write_file(output: str, p: File):
     with open(output, 'w') as w:
 
@@ -52,7 +56,8 @@ def write_file(output: str, p: File):
                 'kind': 'obj',
                 'proto': proto_to_dict(x.proto),
                 'texts': [text_to_dict(x) for x in x.texts],
-                'behavior': [proto_to_dict(x) for x in x.behavior]
+                'behavior': [proto_to_dict(x) for x in x.behavior],
+                'net': [net_to_dict(x) for x in x.net]
             }
             json.dump(p, w)
             w.write("\n")
