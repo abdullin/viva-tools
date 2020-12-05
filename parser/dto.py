@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Any
 
 
 @dataclass
@@ -35,3 +35,11 @@ class File:
     datasets: List[Dataset]
     objects: List[Object]
     prototypes: List[Proto]
+
+@dataclass
+class Assertion:
+    expected: Any
+    actual: Any
+
+    expected_str: str
+    actual_str: str

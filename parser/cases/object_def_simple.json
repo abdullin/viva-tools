@@ -1,0 +1,1 @@
+{"kind": "proto", "name": "INVERT", "inputs": [["Bit", "In1"]], "outputs": [["Bit", "Out1"]], "attrs": {"System": "X86CPU", "Resource": "TIMESLICE"}}

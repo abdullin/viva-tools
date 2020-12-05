@@ -4,12 +4,9 @@ from collections import defaultdict
 import click
 import edn_format
 import os
-import re
 import deepdiff as dd
 
-from dto import *
 from parse import parse_text
-from to_edn import to_edn
 
 
 def sep():
@@ -17,7 +14,19 @@ def sep():
 
 @click.command()
 @click.option("--create-missing", is_flag=True)
-def main(create_missing):
+@click.option("--format", type=str, default="edn")
+def main(create_missing, format):
+
+    if format == "edn":
+        import to_edn as target
+        target_ext = ".edn"
+    elif format == "json":
+        import to_json as target
+        target_ext = ".json"
+    else:
+        raise ValueError("unexpected format " + format)
+
+
     root = "cases"
     for path, subdirs, files in os.walk(root):
         for name in files:
@@ -27,43 +36,25 @@ def main(create_missing):
 
             if ext not in [".ipg", ".idl", ".sd"]:
                 continue
-            output = base + ".edn"
+            output = base +target_ext
             print(output)
             data = parse_text(input)
-            parsed_edn = to_edn(data)
 
 
             if not os.path.exists(output):
                 if create_missing:
                     print(f"Creating file {output}")
-                    with open(output, 'w') as out:
-                        for p in parsed_edn:
-                            out.write(edn_format.dumps(p))
-                            out.write("\n")
+                    target.write_file(output, data)
+
                 else:
                     print(f"FILE NOT FOUND: {output}")
-                    for p in parsed_edn:
-                        print(edn_format.dumps(p))
-                        return
-
-            with open(output) as out:
-                out_text = out.read()
-                loaded_edn = edn_format.loads_all(out_text)
-
-            for (l, p) in zip(loaded_edn, parsed_edn):
-                try:
-                    parsed_typed = edn_format.loads(edn_format.dumps(p))
-                except:
-                    print(edn_format.dumps(p))
-                    raise
-                delta = dd.DeepDiff(l, parsed_typed)
-
+            assertions = target.compare_file(output, data)
+            for a in assertions:
+                delta = dd.DeepDiff(a.expected, a.actual)
                 if delta:
-                    print("Mismatch")
-                    print(delta)
-                    print("Expect: " + edn_format.dumps(l))
-                    print("Parsed: " + edn_format.dumps(p))
-
+                    print(delta.pretty())
+                    print("Expect: " + a.expected_str)
+                    print("Actual: " + a.actual_str)
 
 
 
