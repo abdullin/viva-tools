@@ -13,7 +13,7 @@ def proto_to_dict(x: Proto) -> Dict:
     }
 
     if x.gui:
-        p['gui'] = x.gui
+        p['gui'] = (x.gui.x, x.gui.y)
     return p
 
 

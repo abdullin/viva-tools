@@ -1,6 +1,11 @@
 from dataclasses import dataclass
 from typing import List, Tuple, Dict, Optional, Any
 
+@dataclass
+class Pos:
+    x: int
+    y: int
+
 
 @dataclass
 class Proto:
@@ -8,17 +13,25 @@ class Proto:
     inputs: List
     outputs: List
     attrs: Dict
-    gui: List[Tuple[int,int]]
+    gui: Optional[Pos]
 
 @dataclass
 class Transport:
     input: str
     output: str
-    gui: List[Tuple[int,int]]
+    gui: List[Pos]
+
+
+@dataclass
+class Text:
+    text: str
+    gui: Pos
+
 @dataclass
 class Object:
     proto: Proto
     behavior: List[Proto]
+    texts: List[Text]
     net: List[Transport]
 
 @dataclass

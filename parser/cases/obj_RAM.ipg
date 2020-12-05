@@ -1,0 +1,105 @@
+Object ( Variant O, Bit Done, Bit Busy) RAM
+    ( Variant Data, Variant Addr, Bit WE, Bit ClkG
+    , Bit Go, Bit Wait)
+//_ Attributes TreeGroup="CoreLib\\Memory"
+{
+ // A single port Random Access Memory object that utilizes the standard GDBW protocol.
+ //
+ // Inputs:
+ //
+ // Variant Data: The data to be written.  This is the size of each addressable element.
+ //
+ // Variant Addr: The address for the read or the write.  A dataset of N bits will produce a memory size of 2^N address spaces.
+ //
+ // Bit WE: Write Enable.  Set high with Go and valid Data to perform a write.  Otherwise set low with a high Go to start a read.
+ //
+ // Bit ClkG: The clock for the read side of the FIFO.  If disconnected, defaults to the ClkG global user clock signal.
+ //
+ // Bit Go: Go of the GDBW protocol.  Initiates a read or a write.
+ //
+ // Bit Wait: Wait of the GDBW protocol.  If disconnected, defaults to a value of 0.  Causes the object to become Busy, holding off any GOs.
+ //
+ // Outputs:
+ //
+ // Variant O: Data coming out of the RAM.  Is valid while Done.
+ //
+ // Bit Done: Done of the GDBW protocol.  High when O is valid.  Only high after a read.
+ //
+ // Bit Busy: Busy of the GDBW protocol.  Tells Go to hold off.
+ //
+ // Revision 1
+ //_ Object Prototypes
+ Object ( Variant Data) Input;  //_GUI 15,18
+ Object ( Variant Addr) Input:A;  //_GUI 15,25
+ Object ( Bit WE) Input:B;  //_GUI 15,45
+ Object ( Bit ClkG) Input:C;  //_GUI 15,49
+ //_ Attributes Resource="Global"
+ Object ( Bit Go) Input:D;  //_GUI 15,53
+ Object ( Bit Wait) Input:E;  //_GUI 160,61
+ //_ Attributes Constant="0"
+ Object Output( Variant O) ;  //_GUI 164,21
+ Object Output:A( Bit Done) ;  //_GUI 164,34
+ Object Output:B( Bit Busy) ;  //_GUI 16,63
+ Object ( Variant Data) RAMSP( Variant Data, Variant Addr
+    , Bit ClkG, Bit WE) ;  //_GUI 135,19
+ Object ( Variant Q, Bit ClkG, Bit AClr
+    , Bit Done, Bit Busy) RegOnGo( Variant D, Bit ClkG
+    , Bit AClr, Bit Go, Bit Wait) ;  //_GUI 59,24
+ Object ( Bit Out) AND( Bit In1, Bit In2) ;  //_GUI 47,32
+ Object ( Variant O) Mux( Variant A, Variant B
+    , Bit S) ;  //_GUI 80,21
+ Object ( Variant Out1, Variant Out2, Variant Out3) Junction
+    ( Variant In0) ;  //_GUI 54,25
+ Object ( Bit Out) INVERT( Bit In1) ;  //_GUI 35,31
+ Object Text;  //_GUI 50,9,Register the Address on a Read to be used if a Wait comes on.
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:A
+    ( Bit In2) ;  //_GUI 76,37
+ Object ( Variant Out1) AND:A( Variant In1, Variant In2
+    , Variant In3) ;  //_GUI 117,25
+ Object ( Bit Out) INVERT:A( Bit In1) ;  //_GUI 105,24
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:B
+    ( Bit In0) ;  //_GUI 33,53
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:C
+    ( Bit In0) ;  //_GUI 29,45
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:D
+    ( Bit In0) ;  //_GUI 25,49
+ Object Text;  //_GUI 75,3,If waiting, then switch the RAM's address to the stored address, so if a read  Done is pending, we will continue reading from the same address.
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:E
+    ( Bit In1) ;  //_GUI 56,57
+ Object Text;  //_GUI 107,12,Only write when Go, WE and not Busy.
+ Object Text;  //_GUI 146,66,A Wait will keep a Read or a Write from starting, but only a Read from completing.
+ Object Text;  //_GUI 160,27,Dones only come out after a Read.
+ Object Text;  //_GUI 132,10,Reads and writes are synchronous.
+ Object Text;  //_GUI 38,61,Don't need to store the Go on a write because we don't need to send out a Done on a write.
+ Object Text;  //_GUI 73,60,The Mux won't effect writes (it will be a passthrough) because writes will only occur when we are not Busy which is the same as when we are not Waiting for the RegOnGo object.
+ Object Text;  //_GUI 160,12,O is valid while Done is high.
+
+ //_ Behavior Topology
+ Output.0 = RAMSP.0;
+ Output:A.0 = RegOnGo.3;
+ Output:B.0 = Junction:E.0;  //_GUI 16,58
+ RAMSP.0 = Input.0;  //_GUI 131,21, 131,19
+ RAMSP.1 = Mux.0;
+ RAMSP.2 = Junction:D.1;  //_GUI 133,27, 133,50
+ RAMSP.3 = AND:A.0;  //_GUI 130,30, 130,28
+ RegOnGo.0 = Junction.1;
+ RegOnGo.1 = Junction:D.0;  //_GUI 26,29
+ RegOnGo.3 = AND.0;
+ RegOnGo.4 = Junction:A.0;
+ AND.0 = INVERT.0;
+ AND.1 = Junction:B.0;  //_GUI 34,37
+ Mux.0 = Junction.0;  //_GUI 55,23
+ Mux.1 = RegOnGo.0;
+ Mux.2 = Junction:A.1;  //_GUI 77,29
+ Junction.0 = Input:A.0;
+ INVERT.0 = Junction:C.0;  //_GUI 30,34
+ Junction:A.0 = Input:E.0;  //_GUI 164,38
+ AND:A.0 = INVERT:A.0;
+ AND:A.1 = Junction:C.1;  //_GUI 108,30, 108,46
+ AND:A.2 = Junction:B.1;  //_GUI 112,33, 112,54
+ INVERT:A.0 = Junction:E.1;  //_GUI 102,27, 102,58
+ Junction:B.0 = Input:D.0;
+ Junction:C.0 = Input:B.0;
+ Junction:D.0 = Input:C.0;
+ Junction:E.0 = RegOnGo.4;  //_GUI 57,38
+}

@@ -55,7 +55,8 @@ def to_edn(f: File):
     for x in f.objects:
         bs = [proto_to_edn(x) for x in x.behavior]
         ns = [net_to_edn(x) for x in x.net]
-        result.append((kw("object"), proto_to_edn(x.proto), bs + ns))
+        texts = [text_to_edn(x) for x in x.texts]
+        result.append((kw("object"), proto_to_edn(x.proto), bs + texts + ns))
 
     return result
 
@@ -65,12 +66,14 @@ def proto_to_edn(x: Proto):
     for k in x.attrs:
         attrs[kw(k)] = x.attrs[k]
     if x.gui:
-        attrs[kw('gui')] = x.gui
+        attrs[kw('gui')] = (x.gui.x, x.gui.y)
     return (kw("proto"), x.name, x.inputs, x.outputs, attrs)
 
+def text_to_edn(x: Text):
+    return ((kw("text"), (x.gui.x, x.gui.y), x.text))
 
 def net_to_edn(x: Transport):
     attrs = {}
     if x.gui:
-        attrs[kw('gui')] = x.gui
+        attrs[kw('gui')] = [(x.x,x.y) for x in x.gui]
     return (kw("net"), x.input, x.output, attrs)

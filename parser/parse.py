@@ -44,18 +44,24 @@ def extract_attributes(text:str):
 
 net = re.compile("(?P<left>.+)( = )(?P<right>.+);(\s*//_(?P<attributes>.*))?")
 
-def extract_attr_gui(text) -> Optional[List[Tuple[int,int]]]:
+def extract_attr_gui(text) -> List[Pos]:
     if not text:
-        return None
+        return []
     if not text.startswith("GUI"):
-        return None
+        return []
 
     coords = []
     pairs = text[3:].strip().split(', ')
     for pair in pairs:
         ps = pair.split(',')
-        coords.append((int(ps[0]), int(ps[1])))
+        coords.append(Pos(int(ps[0]), int(ps[1])))
     return coords
+
+def parse_proto_text(text:str) ->Text:
+    if not text.startswith("Object Text;  //_GUI "):
+        raise ValueError(f"Unexpected text start: {text}")
+    items = text[21:].strip().split(',',2)
+    return Text(items[2].replace("\u0001","\n"), Pos(int(items[0]), int(items[1])))
 
 
 def parse_transport_def(text) -> Transport:
@@ -81,15 +87,32 @@ def parse_proto(l:str) -> Proto:
         print(f"Problem parsing proto: {l}")
         raise
 
+
+    if gui:
+        if len(gui) != 1:
+            raise ValueError("Prototype is expected to have one coord pair")
+        gui = gui[0]
+
     return Proto(nam, inputs, outputs, attrs, gui)
 
 
 def parse_object_def(l, body) -> Object:
     proto = parse_proto(l)
 
-    prototypes = [parse_proto(x) for x in body['proto']]
+    proto_strs = body['proto']
+    # reassemble into lines
+    proto_joined = []
+    for p in proto_strs:
+        if p.startswith("//_") or p.startswith(",") or p.startswith("("):
+            proto_joined[-1] += "\n" + p
+            continue
+        proto_joined.append(p)
+
+
+    prototypes = [parse_proto(x) for x in proto_joined]
     net = [parse_transport_def(x) for x in body['behavior']]
-    return Object(proto, prototypes, net)
+    texts = [parse_proto_text(x) for x in body['text']]
+    return Object(proto, prototypes, texts, net)
 
 
 def parse_dataset(l) -> Dataset:
@@ -139,12 +162,16 @@ def parse_text(name) -> File:
 
             body = defaultdict(list)
             body_section = None
-            declaration = ""
+            head = ""
 
             for l in lines[i:]:
                 s = l.strip()
 
                 i+=1
+                if s.startswith("Object Text;"):
+                    body["text"].append(s)
+                    continue
+
                 if l.startswith("{"):
                     body_section = 'doc'
                     continue
@@ -165,12 +192,12 @@ def parse_text(name) -> File:
                     if clean:
                         body[body_section].append(clean)
                 else:
-                    declaration += l
+                    head += l
 
             if body:
-                objects.append(parse_object_def(declaration, body))
+                objects.append(parse_object_def(head, body))
             else:
-                prototypes.append(parse_proto(declaration))
+                prototypes.append(parse_proto(head))
 
 
             continue
