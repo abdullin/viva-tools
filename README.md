@@ -44,6 +44,8 @@ Failed attepmts that didn't quite work out for me:
 
 # The story
 
+## Intro
+
 In year 2019 I got inspired with the robotic hand design (published and open
 sourced by the Haddington Dynamics). There was some exploration and blog posts:
 
@@ -78,4 +80,28 @@ That information might be enough to find a way to:
 Even if I fail (and I probably will), the journey is already worth the lessons
 learnt.
 
+## December 06 2020
 
+![image](images/2020-12-06_16-00-55_RAM.png)
+
+Python parser works out good enough. Introduced intemediate DTO objects that allow to experiment with different output formats.
+
+Currently using EDN as a sort of test suite to prevent regressions as a tweak regex expressions. I didn't bother with writing a proper lexer/parser at this point, since that would just derail from the main objective: understand the domain and start gravitating towards a specific stack.
+
+Although EDN is nice and compact, reading it from the statically typed
+languages is a pain. So I added JSON output format to actually persist Viva
+designs for loading in C# (.NET Core). It looks ugly but is good enough.
+
+JSON objects are loaded in .NET Core app and rendered on via the GTK. It works good enough to establish an initial feedback loop:
+
+- try to load an interesting file;
+- hit an error (usually NRE);
+- save the file into the `cases` folder for the parser;
+- figure out the desired output in EDN format, save it to the `cases`;
+- make sure all scenarios pass;
+- re-generate the JSON output and load it in C#.
+
+
+
+
+Managed to load Viva designs (from the CoreLib) into a .NET Core App via JSON format.

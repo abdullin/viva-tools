@@ -226,29 +226,26 @@ namespace net_draw
 
                     var ios = Math.Max(p.Inputs.Count, p.Outputs.Count);
 
+                    var layout = MakeLayout(p.Name);
+                    int tw, th;
+                        
+                    layout.GetPixelSize(out tw, out th);
 
+                    var box_width = Math.Max(tw + 5, 45);
 
-
-
-                    cr.Rectangle(x, y, 45, 15 * ios + 10);
+                    cr.Rectangle(x, y, box_width, 15 * ios + 10);
                     cr.StrokePreserve();
 
                     cr.SetSourceColor(to(Color.White));
                     cr.Fill();
                     cr.SetSourceColor(to(Color.Red));
-                    cr.MoveTo(p.Gui[0] * 5 + 1, p.Gui[1] * 5 + 1);
-                    cr.ShowText(p.Name);
+                    cr.MoveTo(p.Gui[0] * 5 + 2, p.Gui[1] * 5 - th);
+                    Pango.CairoHelper.ShowLayout(cr, layout);
                 }
                 catch {
                     throw new Exception($"Problem with {p}");
                 }
-
-
-
-
             }
-
-
         }
     }
 }
