@@ -1,1 +1,289 @@
-{"kind": "obj", "proto": {"kind": "proto", "name": "StripWholeLSB", "inputs": [["List", "In1"]], "outputs": [["List", "WholeLSB"], ["List", "Out2"]], "attrs": {"TreeGroup": "BotControl"}}, "texts": [], "behavior": [{"kind": "proto", "name": "Input", "inputs": [], "outputs": [["List", "In1"]], "attrs": {}, "gui": [24, 32]}, {"kind": "proto", "name": "Output", "inputs": [["List", "WholeLSB"]], "outputs": [], "attrs": {}, "gui": [88, 31]}, {"kind": "proto", "name": "Output:A", "inputs": [["List", "Out2"]], "outputs": [], "attrs": {}, "gui": [88, 40]}, {"kind": "proto", "name": "ListIn", "inputs": [["List", "In"]], "outputs": [["Variant", "Out1"], ["Variant", "Out2"]], "attrs": {}, "gui": [29, 30]}, {"kind": "proto", "name": "ListOut", "inputs": [["Variant", "In1"], ["Variant", "In2"]], "outputs": [["List", "Out"]], "attrs": {}, "gui": [73, 38]}, {"kind": "proto", "name": "ListOut:A", "inputs": [["Variant", "In1"], ["Variant", "In2"]], "outputs": [["List", "Out"]], "attrs": {}, "gui": [74, 29]}, {"kind": "proto", "name": "StripWholeLSB", "inputs": [["Variant", "In1"]], "outputs": [["Variant", "WholeLSB"], ["Variant", "Out2"]], "attrs": {}, "gui": [47, 38]}, {"kind": "proto", "name": "StripWholeLSB:A", "inputs": [["Variant", "In1"]], "outputs": [["Variant", "WholeLSB"], ["Variant", "Out2"]], "attrs": {}, "gui": [47, 29]}], "net": [{"kind": "net", "input": "Output.0", "output": "ListOut:A.0", "gui": []}, {"kind": "net", "input": "Output:A.0", "output": "ListOut.0", "gui": []}, {"kind": "net", "input": "ListIn.0", "output": "Input.0", "gui": []}, {"kind": "net", "input": "ListOut.0", "output": "StripWholeLSB.1", "gui": []}, {"kind": "net", "input": "ListOut.1", "output": "StripWholeLSB:A.1", "gui": [[68, 40], [68, 34]]}, {"kind": "net", "input": "ListOut:A.0", "output": "StripWholeLSB.0", "gui": [[71, 34], [71, 37], [65, 37], [65, 40]]}, {"kind": "net", "input": "ListOut:A.1", "output": "StripWholeLSB:A.0", "gui": []}, {"kind": "net", "input": "StripWholeLSB.0", "output": "ListIn.0", "gui": [[40, 41]]}, {"kind": "net", "input": "StripWholeLSB:A.0", "output": "ListIn.1", "gui": []}]}
+{
+  "kind": "obj",
+  "proto": {
+    "kind": "proto",
+    "name": "StripWholeLSB",
+    "inputs": [
+      [
+        "List",
+        "In1"
+      ]
+    ],
+    "outputs": [
+      [
+        "List",
+        "WholeLSB"
+      ],
+      [
+        "List",
+        "Out2"
+      ]
+    ],
+    "attrs": {
+      "TreeGroup": "BotControl"
+    }
+  },
+  "texts": [],
+  "behavior": [
+    {
+      "kind": "proto",
+      "name": "Input",
+      "inputs": [],
+      "outputs": [
+        [
+          "List",
+          "In1"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        24,
+        32
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Output",
+      "inputs": [
+        [
+          "List",
+          "WholeLSB"
+        ]
+      ],
+      "outputs": [],
+      "attrs": {},
+      "gui": [
+        88,
+        31
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "Output:A",
+      "inputs": [
+        [
+          "List",
+          "Out2"
+        ]
+      ],
+      "outputs": [],
+      "attrs": {},
+      "gui": [
+        88,
+        40
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "ListIn",
+      "inputs": [
+        [
+          "List",
+          "In"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "Out1"
+        ],
+        [
+          "Variant",
+          "Out2"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        29,
+        30
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "ListOut",
+      "inputs": [
+        [
+          "Variant",
+          "In1"
+        ],
+        [
+          "Variant",
+          "In2"
+        ]
+      ],
+      "outputs": [
+        [
+          "List",
+          "Out"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        73,
+        38
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "ListOut:A",
+      "inputs": [
+        [
+          "Variant",
+          "In1"
+        ],
+        [
+          "Variant",
+          "In2"
+        ]
+      ],
+      "outputs": [
+        [
+          "List",
+          "Out"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        74,
+        29
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "StripWholeLSB",
+      "inputs": [
+        [
+          "Variant",
+          "In1"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "WholeLSB"
+        ],
+        [
+          "Variant",
+          "Out2"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        47,
+        38
+      ]
+    },
+    {
+      "kind": "proto",
+      "name": "StripWholeLSB:A",
+      "inputs": [
+        [
+          "Variant",
+          "In1"
+        ]
+      ],
+      "outputs": [
+        [
+          "Variant",
+          "WholeLSB"
+        ],
+        [
+          "Variant",
+          "Out2"
+        ]
+      ],
+      "attrs": {},
+      "gui": [
+        47,
+        29
+      ]
+    }
+  ],
+  "net": [
+    {
+      "kind": "net",
+      "input": "Output.0",
+      "output": "ListOut:A.0",
+      "gui": []
+    },
+    {
+      "kind": "net",
+      "input": "Output:A.0",
+      "output": "ListOut.0",
+      "gui": []
+    },
+    {
+      "kind": "net",
+      "input": "ListIn.0",
+      "output": "Input.0",
+      "gui": []
+    },
+    {
+      "kind": "net",
+      "input": "ListOut.0",
+      "output": "StripWholeLSB.1",
+      "gui": []
+    },
+    {
+      "kind": "net",
+      "input": "ListOut.1",
+      "output": "StripWholeLSB:A.1",
+      "gui": [
+        [
+          68,
+          40
+        ],
+        [
+          68,
+          34
+        ]
+      ]
+    },
+    {
+      "kind": "net",
+      "input": "ListOut:A.0",
+      "output": "StripWholeLSB.0",
+      "gui": [
+        [
+          71,
+          34
+        ],
+        [
+          71,
+          37
+        ],
+        [
+          65,
+          37
+        ],
+        [
+          65,
+          40
+        ]
+      ]
+    },
+    {
+      "kind": "net",
+      "input": "ListOut:A.1",
+      "output": "StripWholeLSB:A.0",
+      "gui": []
+    },
+    {
+      "kind": "net",
+      "input": "StripWholeLSB.0",
+      "output": "ListIn.0",
+      "gui": [
+        [
+          40,
+          41
+        ]
+      ]
+    },
+    {
+      "kind": "net",
+      "input": "StripWholeLSB:A.0",
+      "output": "ListIn.1",
+      "gui": []
+    }
+  ]
+}
