@@ -167,4 +167,7 @@ This works good enough to establish an initial feedback loop:
 - make sure all scenarios pass;
 - re-generate the JSON output and load it in C#.
 
-The next objective is to try to draw these missing connection lines.
+The next objective is to try to draw these missing connection lines. Ultimately I should have something that looks like the image below:
+
+
+![image](images/2020-12-06_16-24-06_viva.png)
