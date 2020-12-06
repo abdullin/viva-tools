@@ -4,7 +4,9 @@ This is a collection of tools to work with the files produced by Viva IDEs -
 heterogeneous architecture compiler tools capable of targeting FPGAs.
 
 This is a work in progress and is likely to stay this way for the years to
-come. No promises :)
+come. The goal here is to learn more about the hardware through the unique perspective that Viva/Azido tooling provides. Ultimately, to get back to the hobby project of building a robotic hand.
+
+*Read the story below for the updates.*
 
 ## Files
 
