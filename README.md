@@ -30,17 +30,6 @@ most comfortable for me to iterate rapidly upon. It is an extremely subjective t
 
 Current version does this with C# and GTK.
 
-Failed attepmts that didn't quite work out for me:
-
-- C++ + Borland/Embarcadero - I'm not fluent in C++, it will hamper any progress.
-- Lazarus (Pascal + Delphi IDEs) - UI experience is a breath of fresh air (and a blast from the familiar past). Pascal doesn't feel like a productive environment to me anymore, though.
-- Clojure + Spring - Clojure is nice, fits EDN. Drawing with it in Spring
-  requires figuring out threading in Clojure.
-- Qt + Python - Qt is C++, so bindings are messy in every single language. Plus
-  it feels heavy to install and use.
-- Go + GTK - I love go, but it just gets too verbose in complex projects. Let's
-  leave it to Hashicorp and K8S guys.
-
 
 # The story
 
@@ -80,19 +69,94 @@ That information might be enough to find a way to:
 Even if I fail (and I probably will), the journey is already worth the lessons
 learnt.
 
+## November 29 2020
+
+Making first tangible steps with parsing Viva text files. They are well documented in the readme, but still have an occasional nuance or two. I'd personally prefer to store the data in a format that is still human-readable (for git diffs) but has an established ecosystem for parsing. Current candidates EDN and JSON (YAML over my dead body).
+
+Once the text is parsed via Python into something slightly more convenient, I could quickly iterate on tech/language stacks for displaying and manipulating the designs.
+
+Here is an example of such conversion:
+
+```
+Object ( List WholeLSB, List Out2) StripWholeLSB( List In1)
+//_ Attributes TreeGroup="BotControl"
+{
+ //_ Object Prototypes
+ Object ( List In1) Input;  //_GUI 24,32
+ Object Output( List WholeLSB) ;  //_GUI 88,31
+ Object Output:A( List Out2) ;  //_GUI 88,40
+ Object ( Variant Out1, Variant Out2) ListIn( List In) ;  //_GUI 29,30
+ Object ( List Out) ListOut( Variant In1, Variant In2) ;  //_GUI 73,38
+ Object ( List Out) ListOut:A( Variant In1, Variant In2) ;  //_GUI 74,29
+ Object ( Variant WholeLSB, Variant Out2) StripWholeLSB( Variant In1) ;  //_GUI 47,38
+ Object ( Variant WholeLSB, Variant Out2) StripWholeLSB:A( Variant In1) ;  //_GUI 47,29
+
+ //_ Behavior Topology
+ Output.0 = ListOut:A.0;
+ Output:A.0 = ListOut.0;
+ ListIn.0 = Input.0;
+ ListOut.0 = StripWholeLSB.1;
+ ListOut.1 = StripWholeLSB:A.1;  //_GUI 68,40, 68,34
+ ListOut:A.0 = StripWholeLSB.0;  //_GUI 71,34, 71,37, 65,37, 65,40
+ ListOut:A.1 = StripWholeLSB:A.0;
+ StripWholeLSB.0 = ListIn.0;  //_GUI 40,41
+ StripWholeLSB:A.0 = ListIn.1;
+}
+```
+
+Resulting EDN that is easier to parse:
+
+```edn
+(:object
+  (:proto "StripWholeLSB" [("List" "In1")] [("List" "WholeLSB") ("List" "Out2")] {:TreeGroup "BotControl"})
+  [(:proto "Input" [] [("List" "In1")] {:gui (24 32)})
+   (:proto "Output" [("List" "WholeLSB")] [] {:gui (88 31)})
+   (:proto "Output:A" [("List" "Out2")] [] {:gui (88 40)})
+   (:proto "ListIn" [("List" "In")] [("Variant" "Out1") ("Variant" "Out2")] {:gui (29 30)})
+   (:proto "ListOut" [("Variant" "In1") ("Variant" "In2")] [("List" "Out")] {:gui (73 38)})
+   (:proto "ListOut:A" [("Variant" "In1") ("Variant" "In2")] [("List" "Out")] {:gui (74 29)})
+   (:proto "StripWholeLSB" [("Variant" "In1")] [("Variant" "WholeLSB") ("Variant" "Out2")] {:gui (47 38)})
+   (:proto "StripWholeLSB:A" [("Variant" "In1")] [("Variant" "WholeLSB") ("Variant" "Out2")] {:gui (47 29)})
+   (:net "Output.0" "ListOut:A.0" {})
+   (:net "Output:A.0" "ListOut.0" {})
+   (:net "ListIn.0" "Input.0" {})
+   (:net "ListOut.0" "StripWholeLSB.1" {})
+   (:net "ListOut.1" "StripWholeLSB:A.1" {:gui [(68 40) (68 34)]})
+   (:net "ListOut:A.0" "StripWholeLSB.0" {:gui [(71 34) (71 37) (65 37) (65 40)]})
+   (:net "ListOut:A.1" "StripWholeLSB:A.0" {})
+   (:net "StripWholeLSB.0" "ListIn.0" {:gui [(40 41)]})
+   (:net "StripWholeLSB:A.0" "ListIn.1" {})])
+```
+
+
 ## December 06 2020
 
 ![image](images/2020-12-06_16-00-55_RAM.png)
 
-Python parser works out good enough. Introduced intemediate DTO objects that allow to experiment with different output formats.
+Python parser works out good enough. I also introduced intemediate DTO objects that allow to experiment with different output formats.
 
 Currently using EDN as a sort of test suite to prevent regressions as a tweak regex expressions. I didn't bother with writing a proper lexer/parser at this point, since that would just derail from the main objective: understand the domain and start gravitating towards a specific stack.
 
 Although EDN is nice and compact, reading it from the statically typed
 languages is a pain. So I added JSON output format to actually persist Viva
-designs for loading in C# (.NET Core). It looks ugly but is good enough.
+designs for loading in C# (.NET Core). It looks really ugly but is good enough.
 
-JSON objects are loaded in .NET Core app and rendered on via the GTK. It works good enough to establish an initial feedback loop:
+This allows to start iterating on the best tech stack for loading and manipulating these designs (the ultimate goal is to learn). The process is highly subjective, which is OK at this point, since there is no team to worry about.
+
+Failed attepmts that didn't quite work out:
+
+- C++ + Borland/Embarcadero - I'm not fluent in C++, this hampers the progress. Pass.
+- Lazarus (Pascal + Delphi IDEs) - UI experience is a breath of fresh air (and a blast from the familiar past). Pascal doesn't feel like a productive environment to me anymore, though. Pass.
+- Clojure + Spring - Clojure is nice, fits EDN. Drawing with it in Spring
+  requires figuring out threading in Clojure. Pass for now (despite the Lisp appeal for manipulating the data structures).
+- Qt + Python - Qt is C++, so bindings are messy in every single language. Plus
+  it feels heavy to install and use. Pass for now.
+- Go + GTK - I love go, but it just gets too verbose in complex projects. Let's
+  leave it to Hashicorp and K8S guys. Pass for now.
+  
+In the end, I managed to make the most progress with C# (.NET Core) and GTK: load the designs and and start displaying them.
+
+This works good enough to establish an initial feedback loop:
 
 - try to load an interesting file;
 - hit an error (usually NRE);
@@ -101,7 +165,4 @@ JSON objects are loaded in .NET Core app and rendered on via the GTK. It works g
 - make sure all scenarios pass;
 - re-generate the JSON output and load it in C#.
 
-
-
-
-Managed to load Viva designs (from the CoreLib) into a .NET Core App via JSON format.
+The next objective is to try to draw these missing connection lines.
