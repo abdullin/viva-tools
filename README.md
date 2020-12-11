@@ -54,7 +54,17 @@ learnt.
 
 Switched from C# to pure Python for figuring out the rendering rules. Cairo+Pango are good enough and result in feedback cycle of less than a second (between hitting a shortcut and seeing an updated image).
 
-This also had an added benefit, that I could update the domain model directly in Python. 
+This also had an added benefit, that I could update the domain model directly in Python, while still keeping it connected to the actual data.
+
+Next steps:
+
+- try to cleanup the transport lines (so that they match more-or-less renders from Viva)
+- look into performing a basic recursive expansion.
+
+An annoying side-effect is that PyCharm has a memory leak that is probably caused by continuous reloading of the same SVG.
+
+
+![image](images/2020-12-11_21-35-00_parser.png)
 
 ## December 06 2020
 
