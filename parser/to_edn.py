@@ -61,19 +61,35 @@ def to_edn(f: File):
     return result
 
 
+def pin_to_edn(x: Pin):
+    return (x.type, x.name)
+
 def proto_to_edn(x: Proto):
     attrs = {}
     for k in x.attrs:
         attrs[kw(k)] = x.attrs[k]
     if x.gui:
         attrs[kw('gui')] = (x.gui.x, x.gui.y)
-    return (kw("proto"), x.name, x.inputs, x.outputs, attrs)
+
+    inputs = [pin_to_edn(i) for i in x.inputs]
+    outputs = [pin_to_edn(i) for i in x.outputs]
+    name = SymbolRef(x.type, x.id).to_str()
+    return (kw("proto"), name, inputs, outputs, attrs)
 
 def text_to_edn(x: Text):
     return ((kw("text"), (x.gui.x, x.gui.y), x.text))
+
+def net_ref_to_edn(x: PinRef):
+    t = x.type
+    if x.id:
+        t += ":" + x.id
+    t += "." + str(x.io_num)
+    return t
 
 def net_to_edn(x: Transport):
     attrs = {}
     if x.gui:
         attrs[kw('gui')] = [(x.x,x.y) for x in x.gui]
-    return (kw("net"), x.input, x.output, attrs)
+    input = net_ref_to_edn(x.input)
+    output = net_ref_to_edn(x.output)
+    return (kw("net"), input, output, attrs)

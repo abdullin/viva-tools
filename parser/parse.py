@@ -8,7 +8,7 @@ ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
 obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>"]+)\s*(\((?P<inputs>[\n\w\s,]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
 
 
-def extract_pairs(line: str):
+def extract_pins(line: str) -> List[Pin]:
     if not line:
         return []
     clean = line.strip()
@@ -19,7 +19,10 @@ def extract_pairs(line: str):
         pair = p.strip().split(" ")
         if len(pair)!=2:
             raise ValueError(f"problem splitting pairs from '{line}'")
-        result.append((pair[0].strip(), pair[1].strip()))
+        type = pair[0].strip()
+        name = pair[1].strip()
+        p = Pin(type, name)
+        result.append(p)
     return result
 
 
@@ -67,14 +70,35 @@ def parse_proto_text(text:str) ->Text:
     items = text[21:].strip().split(',',2)
     return Text(items[2].replace("\u0001","\n"), Pos(int(items[0]), int(items[1])))
 
+def parse_symbol_reference(text: str) -> SymbolRef:
+    id = None
+    s = text.split(':')
+    if len(s)==2:
+        id = s[1]
+    return SymbolRef(s[0], id)
+
+
+def parse_net_reference(text: str) -> PinRef:
+    io_num = 0
+    id = None
+    s1 = text.split('.')
+    if len(s1) == 2:
+        io_num = int(s1[1])
+    s2 = s1[0].split(':')
+    if len(s2) == 2:
+        id = s2[1]
+    type = s2[0]
+    return PinRef(type, id, io_num)
 
 def parse_transport_def(text) -> Transport:
     m = net.search(text)
     if not m:
         raise ValueError(f"Unexpected net: {text}")
     gui = extract_attr_gui(m.group('attributes'))
+    input = parse_net_reference(m.group('left'))
+    output = parse_net_reference(m.group('right'))
 
-    return Transport(m.group('left'), m.group('right'), gui)
+    return Transport(input, output, gui)
 
 
 
@@ -82,17 +106,18 @@ def parse_proto(l:str) -> Proto:
     m = obj_def.search(l)
 
     try:
-        nam = m.group('name').strip()
-        outputs = extract_pairs(m.group('outputs'))
-        inputs = extract_pairs(m.group('inputs'))
+        nam =  m.group('name').strip()
+        assert nam != "("
+
+        ref = parse_symbol_reference(nam)
+        outputs = extract_pins(m.group('outputs'))
+        inputs = extract_pins(m.group('inputs'))
         gui = extract_attr_gui(m.group('attributes'))
         attrs = extract_attributes(m.group('attributes'))
     except:
         print(f"Problem parsing proto: <{l}>")
         raise
 
-    if nam == "(":
-        raise ValueError(l)
 
 
     if gui:
@@ -100,7 +125,7 @@ def parse_proto(l:str) -> Proto:
             raise ValueError("Prototype is expected to have one coord pair")
         gui = gui[0]
 
-    return Proto(nam, inputs, outputs, attrs, gui)
+    return Proto(ref.type, ref.id, inputs, outputs, attrs, gui)
 
 
 def parse_object_def(l, body) -> Object:

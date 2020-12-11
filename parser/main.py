@@ -15,7 +15,8 @@ def sep():
 @click.command()
 @click.option("--create-missing", is_flag=True)
 @click.option("--format", type=str, default="edn")
-def main(create_missing, format):
+@click.option("--detailed", is_flag=True)
+def main(create_missing, format, detailed):
 
     if format == "edn":
         import to_edn as target
@@ -53,8 +54,9 @@ def main(create_missing, format):
                 delta = dd.DeepDiff(a.expected, a.actual)
                 if delta:
                     print(delta.pretty())
-                    print("Expect: " + a.expected_str)
-                    print("Actual: " + a.actual_str)
+                    if detailed:
+                        print("Expect: " + a.expected_str)
+                        print("Actual: " + a.actual_str)
 
 
 
