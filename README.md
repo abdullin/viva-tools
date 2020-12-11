@@ -8,34 +8,9 @@ come. The goal here is to learn more about the hardware through the unique persp
 
 *Read the story below for the updates.*
 
-## Files
-
-Files folder contains a collection of references, docs and files found on the Github
-earlier. Of particular interest are: partial sources of Viva, Azido.msi and
-Dexter Gateware.
-
-## Parser
-
-Parser - a Python utility to parse Viva text files and experiment with
-converting it into different formats. The purpose is to explore the domain
-and figure out the most convenient format (human-readable for git diffing,
-yet convenient to read/write from the software). 
-
-Currently using EDN and JSON. EDN displays nicely but is pain to read from the
-.NET C#. JSON is ugly to read but easier to deserialize.
-
-## Viewer
-
-Viewer is an experiment in loading Viva/Azido files and displaying them. The
-purpose is to find a set of technologies that fit the constraints and are the
-most comfortable for me to iterate rapidly upon. It is an extremely subjective thing.
-
-Current version does this with C# and GTK.
 
 
 # The story
-
-## Intro
 
 In year 2019 I got inspired with the robotic hand design (published and open
 sourced by the Haddington Dynamics). There was some exploration and blog posts:
@@ -70,6 +45,57 @@ That information might be enough to find a way to:
 
 Even if I fail (and I probably will), the journey is already worth the lessons
 learnt.
+
+# Updates
+
+## December 11 2020
+
+![image](images/2020-12-10-render.svg)
+
+Switched from C# to pure Python for figuring out the rendering rules. Cairo+Pango are good enough and result in feedback cycle of less than a second (between hitting a shortcut and seeing an updated image).
+
+This also had an added benefit, that I could update the domain model directly in Python. 
+
+## December 06 2020
+
+![image](images/2020-12-06_16-00-55_RAM.png)
+
+Python parser works out good enough. I also introduced intemediate DTO objects that allow to experiment with different output formats.
+
+Currently using EDN as a sort of test suite to prevent regressions as a tweak regex expressions. I didn't bother with writing a proper lexer/parser at this point, since that would just derail from the main objective: understand the domain and start gravitating towards a specific stack.
+
+Although EDN is nice and compact, reading it from the statically typed
+languages is a pain. So I added JSON output format to actually persist Viva
+designs for loading in C# (.NET Core). It looks really ugly but is good enough.
+
+This allows to start iterating on the best tech stack for loading and manipulating these designs (the ultimate goal is to learn). The process is highly subjective, which is OK at this point, since there is no team to worry about.
+
+Failed attepmts that didn't quite work out:
+
+- C++ + Borland/Embarcadero - I'm not fluent in C++, this hampers the progress. Pass.
+- Lazarus (Pascal + Delphi IDEs) - UI experience is a breath of fresh air (and a blast from the familiar past). Pascal doesn't feel like a productive environment to me anymore, though. Pass.
+- Clojure + Spring - Clojure is nice, fits EDN. Drawing with it in Spring
+  requires figuring out threading in Clojure. Pass for now (despite the Lisp appeal for manipulating the data structures).
+- Qt + Python - Qt is C++, so bindings are messy in every single language. Plus
+  it feels heavy to install and use. Pass for now.
+- Go + GTK - I love go, but it just gets too verbose in complex projects. Let's
+  leave it to Hashicorp and K8S guys. Pass for now.
+  
+In the end, I managed to make the most progress with C# (.NET Core) and GTK: load the designs and and start displaying them.
+
+This works good enough to establish an initial feedback loop:
+
+- try to load an interesting file;
+- hit an error (usually NRE);
+- save the file into the `cases` folder for the parser;
+- figure out the desired output in EDN format, save it to the `cases`;
+- make sure all scenarios pass;
+- re-generate the JSON output and load it in C#.
+
+The next objective is to try to draw these missing connection lines. Ultimately I should have something that looks like the image below:
+
+
+![image](images/2020-12-06_16-24-06_viva.png)
 
 ## November 29 2020
 
@@ -130,44 +156,28 @@ Resulting EDN that is easier to parse:
    (:net "StripWholeLSB:A.0" "ListIn.1" {})])
 ```
 
+# Folders
 
-## December 06 2020
+## Files
 
-![image](images/2020-12-06_16-00-55_RAM.png)
+Files folder contains a collection of references, docs and files found on the Github
+earlier. Of particular interest are: partial sources of Viva, Azido.msi and
+Dexter Gateware.
 
-Python parser works out good enough. I also introduced intemediate DTO objects that allow to experiment with different output formats.
+## Parser
 
-Currently using EDN as a sort of test suite to prevent regressions as a tweak regex expressions. I didn't bother with writing a proper lexer/parser at this point, since that would just derail from the main objective: understand the domain and start gravitating towards a specific stack.
+Parser - a Python utility to parse Viva text files and experiment with
+converting it into different formats. The purpose is to explore the domain
+and figure out the most convenient format (human-readable for git diffing,
+yet convenient to read/write from the software). 
 
-Although EDN is nice and compact, reading it from the statically typed
-languages is a pain. So I added JSON output format to actually persist Viva
-designs for loading in C# (.NET Core). It looks really ugly but is good enough.
+Currently using EDN and JSON. EDN displays nicely but is pain to read from the
+.NET C#. JSON is ugly to read but easier to deserialize.
 
-This allows to start iterating on the best tech stack for loading and manipulating these designs (the ultimate goal is to learn). The process is highly subjective, which is OK at this point, since there is no team to worry about.
+## Viewer
 
-Failed attepmts that didn't quite work out:
+Viewer is an experiment in loading Viva/Azido files and displaying them. The
+purpose is to find a set of technologies that fit the constraints and are the
+most comfortable for me to iterate rapidly upon. It is an extremely subjective thing.
 
-- C++ + Borland/Embarcadero - I'm not fluent in C++, this hampers the progress. Pass.
-- Lazarus (Pascal + Delphi IDEs) - UI experience is a breath of fresh air (and a blast from the familiar past). Pascal doesn't feel like a productive environment to me anymore, though. Pass.
-- Clojure + Spring - Clojure is nice, fits EDN. Drawing with it in Spring
-  requires figuring out threading in Clojure. Pass for now (despite the Lisp appeal for manipulating the data structures).
-- Qt + Python - Qt is C++, so bindings are messy in every single language. Plus
-  it feels heavy to install and use. Pass for now.
-- Go + GTK - I love go, but it just gets too verbose in complex projects. Let's
-  leave it to Hashicorp and K8S guys. Pass for now.
-  
-In the end, I managed to make the most progress with C# (.NET Core) and GTK: load the designs and and start displaying them.
-
-This works good enough to establish an initial feedback loop:
-
-- try to load an interesting file;
-- hit an error (usually NRE);
-- save the file into the `cases` folder for the parser;
-- figure out the desired output in EDN format, save it to the `cases`;
-- make sure all scenarios pass;
-- re-generate the JSON output and load it in C#.
-
-The next objective is to try to draw these missing connection lines. Ultimately I should have something that looks like the image below:
-
-
-![image](images/2020-12-06_16-24-06_viva.png)
+Current version does this with C# and GTK.
