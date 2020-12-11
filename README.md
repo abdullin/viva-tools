@@ -54,7 +54,9 @@ learnt.
 
 Switched from C# to pure Python for figuring out the rendering rules. Cairo+Pango are good enough and result in feedback cycle of less than a second (between hitting a shortcut and seeing an updated image).
 
-This also had an added benefit, that I could update the domain model directly in Python, while still keeping it connected to the actual data.
+This also had an added benefit, that I could update the domain model directly in Python, while still keeping it connected to the actual data. 
+
+Most of the work happens in [view.py](https://github.com/abdullin/viva-tools/blob/36759cd12b0bcfc2feae628d251a6a2a31086285/parser/view.py) (link points to the current commit). The output is an SVG file (vector graphics feels to be more suitable than raster for the task at hand).
 
 Next steps:
 
