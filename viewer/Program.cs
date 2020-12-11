@@ -234,7 +234,31 @@ namespace net_draw
                     var box_width = Math.Max(tw + 5, 45);
 
                     cr.Rectangle(x, y, box_width, 15 * ios + 10);
-                    cr.StrokePreserve();
+                    cr.LineWidth = 1;
+                    cr.Stroke();
+
+                    const int boxSize = 6;
+
+                    for (int i = 0; i < p.Inputs.Count; i++) {
+                        cr.SetSourceColor(to(Color.Red));
+                        
+                        cr.Rectangle(x-boxSize, y + 7 + 15*i, boxSize, boxSize);
+                        cr.Fill();
+                        cr.MoveTo(x +1, y+13+15*i ); 
+                        cr.SetFontSize(10);
+                        cr.ShowText(p.Inputs[i][1]);
+                    }
+                    
+                    
+                    for (int i = 0; i < p.Outputs.Count; i++) {
+                        cr.SetSourceColor(to(Color.Red));
+                          
+                        cr.Rectangle(x+box_width, y + 7 + 15*i, boxSize, boxSize);
+                        cr.Fill();
+                        cr.MoveTo(x +box_width, y+13+15*i ); 
+                        cr.SetFontSize(10);
+                        cr.ShowText(p.Outputs[i][1]);
+                    }
 
                     cr.SetSourceColor(to(Color.White));
                     cr.Fill();
