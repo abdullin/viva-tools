@@ -1,3 +1,5 @@
+import math
+
 import cairo
 import gi
 gi.require_version('PangoCairo', '1.0')
@@ -77,10 +79,11 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
             grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x+20, y)
 
             ctx.set_source_rgb(1, 0, 0)
-            ctx.move_to(x, y)
-            ctx.rel_line_to(0, -4)
-            ctx.rel_line_to(4,4)
-            ctx.rel_line_to(-4, 4)
+            ctx.move_to(x, y-4)
+            ctx.rel_line_to(16, 0)
+            ctx.rel_line_to(4, 4)
+            ctx.rel_line_to(-4,4)
+            ctx.rel_line_to(-16, 0)
             ctx.close_path()
             ctx.stroke()
 
@@ -95,12 +98,14 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
             ctx.set_source_rgb(1, 0, 0)
             ctx.move_to(x, y)
             ctx.rel_line_to(4, -4)
+            ctx.rel_line_to(16,0)
             ctx.rel_line_to(0, 9)
+            ctx.rel_line_to(-16,0)
             ctx.rel_line_to(-4, -4)
             ctx.close_path()
             ctx.stroke()
 
-            ctx.move_to(x+8, y)
+            ctx.move_to(x+24, y)
             print_text(ctx, b.inputs[0].name)
             continue
 
@@ -111,11 +116,9 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
             grid["->" + b.get_ref().to_pin_ref(1).to_str()] = (x, y)
             grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x, y)
             grid[b.get_ref().to_pin_ref(1).to_str() + "->"] = (x, y)
-            ctx.move_to(x -4, y)
-            ctx.rel_line_to(8, 0)
-            ctx.move_to(x,y-4)
-            ctx.rel_line_to(0, 8)
-            ctx.stroke()
+            ctx.move_to(x, y)
+            ctx.arc(x, y, 2, 0,math.pi * 2)
+            ctx.fill()
 
             continue
 
@@ -142,7 +145,7 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
 
             grid["->" + b.get_ref().to_pin_ref(j).to_str()] = (io_x, io_y+4)
 
-            io_y+=16
+            io_y+=15
 
         io_x = x + width
         io_y = y+5
@@ -159,7 +162,7 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
             print_text(ctx, o.name, right=True)
 
 
-            io_y += 16
+            io_y += 15
 
 
 
