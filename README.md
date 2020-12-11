@@ -15,7 +15,7 @@ come. The goal here is to learn more about the hardware through the unique persp
 In year 2019 I got inspired with the robotic hand design (published and open
 sourced by the Haddington Dynamics). There was some exploration and blog posts:
 
-- [Picking a robotic hobbyi (2019)](https://abdullin.com/child-friendly-hobby/)
+- [Picking a robotic hobby (2019)](https://abdullin.com/child-friendly-hobby/)
 - [Dive into FPGA, PCB and 3D printing
   (2019)](https://abdullin.com/dive-into-fpga/)
 - [Robotic R&D: FPGA and ML Pipelines
