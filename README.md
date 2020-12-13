@@ -48,6 +48,24 @@ learnt.
 
 # Updates
 
+## December 12 2020
+
+Managed to render the primary sheet of Dexter's gateware into the SVG. It somewhat works.
+
+![Dexter gateware](images/2020-12-12_10-34-40_dexter.png)
+
+There is a problem: Cairo + Pango render font as curves instead of the text. This results in heavy SVG files that are just slow to manipulate.
+
+Perhaps, I need to look into generating SVG directly.
+
+Alternatives are:
+
+- Canvas
+- WebGL
+- back to Cairo in a desktop UI
+
+Currently the priority is to still keep the fast feedback loop, while starting to explore sheet transformations (e.g. trivial recusrive unwrapping).
+
 ## December 11 2020
 
 ![image](images/2020-12-10-render.svg)

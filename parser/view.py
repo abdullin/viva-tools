@@ -10,7 +10,7 @@ from gi.repository import Pango as pango, PangoCairo as pc
 from parse import parse_text
 from dto import *
 
-data = parse_text("cases/obj_RAM.ipg")
+data = parse_text("cases/dexter_main.ipg")
 
 obj = data.objects[0]
 
@@ -47,8 +47,16 @@ def draw_net(ctx, points):
         ctx.line_to(x, y)
     ctx.stroke()
 
+max_x, max_y = 0,0
 
-with cairo.SVGSurface("example.svg", 950, 400) as surface:
+for x in obj.behavior:
+    max_x = max(max_x, x.gui.x)
+    max_y = max(max_y, x.gui.y)
+
+print(max_x, max_y)
+
+
+with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     ctx = cairo.Context(surface)
 
     grid = {}
@@ -111,28 +119,41 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
             grid["->" + b.get_ref().to_pin_ref(1).to_str()] = (x, y)
             grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x, y)
             grid[b.get_ref().to_pin_ref(1).to_str() + "->"] = (x, y)
+            grid[b.get_ref().to_pin_ref(2).to_str() + "->"] = (x, y)
             ctx.move_to(x, y)
             ctx.arc(x, y, 2, 0, math.pi * 2)
             ctx.fill()
 
             continue
 
-        ctx.move_to(x + 4, y - 6)
+        ctx.move_to(x + 4, y-2)
         tw, th = print_text(ctx, b.type, fd=behavior_label)
 
         ctx.set_source_rgb(0, 0, 1)
         ctx.set_line_width(1)
         ios = max(len(b.inputs), len(b.outputs))
-        height = 15 * ios + 10
+        height = 15 * ios
         width = max(tw + 10, 20)
 
-        ctx.rectangle(x, y, width, height)
+        ctx.move_to(x+4, y)
+        ctx.line_to(x, y)
+        ctx.rel_line_to(0, height)
+        ctx.rel_line_to(width, 0)
+        ctx.rel_line_to(0, -height)
+        ctx.rel_line_to(-4,0)
+
+        #ctx.rectangle(x, y, width, height)
         ctx.stroke()
 
-        io_x = x - 8
-        io_y = y + 5
+        pad_size = 8
+        pad_space = 15
+        pad_start_y = 1
+
+        io_x = x - pad_size
+        io_y = y + pad_start_y
+
         for j, i in enumerate(b.inputs):
-            ctx.rectangle(io_x, io_y, 8, 8)
+            ctx.rectangle(io_x, io_y, pad_size, pad_size)
             ctx.set_source_rgb(0, 0, 1)
             ctx.fill()
             ctx.move_to(io_x + 10, io_y + 4)
@@ -140,13 +161,15 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
 
             grid["->" + b.get_ref().to_pin_ref(j).to_str()] = (io_x, io_y + 4)
 
-            io_y += 15
+            io_y += pad_space
 
         io_x = x + width
-        io_y = y + 5
+        io_y = y + pad_start_y
+
+
 
         for j, o in enumerate(b.outputs):
-            ctx.rectangle(io_x, io_y, 8, 8)
+            ctx.rectangle(io_x, io_y, pad_size, pad_size)
 
             ctx.set_source_rgb(0, 0, 1)
             grid[b.get_ref().to_pin_ref(j).to_str() + "->"] = (io_x, io_y + 4)
@@ -155,7 +178,7 @@ with cairo.SVGSurface("example.svg", 950, 400) as surface:
             ctx.move_to(io_x - 2, io_y + 4)
             print_text(ctx, o.name, right=True)
 
-            io_y += 15
+            io_y += pad_space
 
     for n in obj.net:
         points = []
