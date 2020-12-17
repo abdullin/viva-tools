@@ -50,7 +50,7 @@ learnt.
 
 ## December 17 2020
 
-Feedback loop with Python+Cairo is fast enough to keep on tweaking render until the transport lines are straight.
+Feedback loop with Python+Cairo is fast enough to keep on tweaking render until the transport lines are (almost) straight.
 
 The code is intentionally repetitive at this point. I want to avoid premature optimisation here.
 
