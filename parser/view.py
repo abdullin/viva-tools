@@ -18,7 +18,7 @@ obj = data.objects[0]
 default_font = pango.font_description_from_string("Arial 8")
 header_font = pango.font_description_from_string("Arial 14")
 pin_font = pango.font_description_from_string("Arial 6")
-behavior_label = pango.font_description_from_string("Consolas 8")
+behavior_label = pango.font_description_from_string("Arial 7")
 
 
 def make_text(ctx: cairo.Context, text, fd=default_font):
@@ -118,7 +118,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.close_path()
             ctx.stroke()
 
-            ctx.move_to(x + 24, y)
+            ctx.move_to(x + 24, y+5)
             print_text(ctx, b.inputs[0].name)
             continue
 
@@ -135,13 +135,16 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
             continue
 
-        ctx.move_to(x + 4, y-2)
+        ctx.move_to(x + 4, y)
         tw, th = print_text(ctx, b.type, fd=behavior_label)
 
         ctx.set_source_rgb(0, 0, 1)
         ctx.set_line_width(1)
         ios = max(len(b.inputs), len(b.outputs))
         height = 15 * ios
+
+        if ios == 1:
+            height+=5
 
         left_w = 0
         for w in b.inputs:
@@ -174,6 +177,9 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         io_x = x - pad_size
         io_y = y + pad_start_y
 
+
+        if len(b.inputs)==1:
+            io_y+=5
         for j, i in enumerate(b.inputs):
             ctx.rectangle(io_x, io_y, pad_size, pad_size)
             ctx.set_source_rgb(0, 0, 1)
@@ -189,6 +195,8 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         io_y = y + pad_start_y
 
 
+        if len(b.outputs)==1:
+            io_y+=5
 
         for j, o in enumerate(b.outputs):
             ctx.rectangle(io_x, io_y, pad_size, pad_size)
