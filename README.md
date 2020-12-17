@@ -66,6 +66,14 @@ Alternatives are:
 
 Currently the priority is to still keep the fast feedback loop, while starting to explore sheet transformations (e.g. trivial recusrive unwrapping).
 
+## December 17 2020
+
+Feedback loop with Python+Cairo is fast enough to keep on tweaking render until the transport lines are straight.
+
+The code is intentionally repetitive at this point. I want to avoid premature optimisation here.
+
+![image](images/2020-12-18_00-03-28_example.png)
+
 ## December 11 2020
 
 ![image](images/2020-12-10-render.svg)

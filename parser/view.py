@@ -17,7 +17,7 @@ obj = data.objects[0]
 
 default_font = pango.font_description_from_string("Arial 8")
 header_font = pango.font_description_from_string("Arial 14")
-pin_font = pango.font_description_from_string("Arial 6")
+pin_font = pango.font_description_from_string("Arial 7")
 behavior_label = pango.font_description_from_string("Arial 7")
 
 
@@ -84,6 +84,8 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
     for b in obj.behavior:
 
+
+
         x, y = b.gui.x * 5, b.gui.y * 5
 
         # print(b.type)
@@ -135,8 +137,8 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
             continue
 
-        ctx.move_to(x + 4, y)
-        tw, th = print_text(ctx, b.type, fd=behavior_label)
+        ctx.move_to(x + 6, y)
+        tw, th = print_text(ctx, b.type.strip('"'), fd=behavior_label)
 
         ctx.set_source_rgb(0, 0, 1)
         ctx.set_line_width(1)
@@ -149,14 +151,14 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         left_w = 0
         for w in b.inputs:
             txt = make_text(ctx, w.name, fd=pin_font)
-            dx, dy = txt.get_pixel_size()
-            left_w = max(dy, left_w)
+            dw, dh = txt.get_pixel_size()
+            left_w = max(dw, left_w)
 
         right_w = 0
         for w in b.outputs:
             txt = make_text(ctx, w.name, fd=pin_font)
-            dx, dy = txt.get_pixel_size()
-            right_w = max(dy, right_w)
+            dw, dh = txt.get_pixel_size()
+            right_w = max(dw, right_w)
 
         width = max(tw, left_w + right_w) + 10
 
@@ -165,7 +167,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         ctx.rel_line_to(0, height)
         ctx.rel_line_to(width, 0)
         ctx.rel_line_to(0, -height)
-        ctx.rel_line_to(-4,0)
+        ctx.rel_line_to(tw - width + 8,0)
 
         #ctx.rectangle(x, y, width, height)
         ctx.stroke()
@@ -181,6 +183,15 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         if len(b.inputs)==1:
             io_y+=5
         for j, i in enumerate(b.inputs):
+
+
+            # push Done & Wait to the very botton
+            if i.name == "Go":
+
+                delta = len(b.outputs) - len(b.inputs)
+                if delta > 0:
+                    io_y += pad_space * delta
+
             ctx.rectangle(io_x, io_y, pad_size, pad_size)
             ctx.set_source_rgb(0, 0, 1)
             ctx.fill()
@@ -199,6 +210,15 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             io_y+=5
 
         for j, o in enumerate(b.outputs):
+
+            # push Done & Wait to the very botton
+            if o.name == "Done":
+
+                delta = len(b.inputs) - len(b.outputs)
+                if delta > 0:
+                    io_y += pad_space * delta
+
+
             ctx.rectangle(io_x, io_y, pad_size, pad_size)
 
             ctx.set_source_rgb(0, 0, 1)
