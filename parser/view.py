@@ -2,6 +2,7 @@ import math
 
 import cairo
 import gi
+import draw
 
 gi.require_version('PangoCairo', '1.0')
 gi.require_version('Pango', '1.0')
@@ -16,9 +17,17 @@ obj = data.objects[0]
 
 default_font = pango.font_description_from_string("Arial 8")
 header_font = pango.font_description_from_string("Arial 14")
-
+pin_font = pango.font_description_from_string("Arial 6")
 behavior_label = pango.font_description_from_string("Consolas 8")
 
+
+def make_text(ctx: cairo.Context, text, fd=default_font):
+    layout = pc.create_layout(ctx)
+    ctx.set_source_rgb(0, 0, 0)
+
+    layout.set_font_description(fd)
+    layout.set_text(text)
+    return layout
 
 def print_text(ctx: cairo.Context, text, right=False, fd=default_font):
     layout = pc.create_layout(ctx)
@@ -80,10 +89,10 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         # print(b.type)
 
         if b.type == "Input":
-            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x + 20, y)
+            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x + 20, y+5)
 
             ctx.set_source_rgb(1, 0, 0)
-            ctx.move_to(x, y - 4)
+            ctx.move_to(x, y +1)
             ctx.rel_line_to(16, 0)
             ctx.rel_line_to(4, 4)
             ctx.rel_line_to(-4, 4)
@@ -91,16 +100,16 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.close_path()
             ctx.stroke()
 
-            ctx.move_to(x - 4, y)
+            ctx.move_to(x - 4, y+5)
             print_text(ctx, b.outputs[0].name, right=True)
 
             continue
 
         if b.type == "Output":
             ref = "->" + b.get_ref().to_pin_ref(0).to_str()
-            grid[ref] = (x, y)
+            grid[ref] = (x, y+5)
             ctx.set_source_rgb(1, 0, 0)
-            ctx.move_to(x, y)
+            ctx.move_to(x, y+5)
             ctx.rel_line_to(4, -4)
             ctx.rel_line_to(16, 0)
             ctx.rel_line_to(0, 9)
@@ -114,14 +123,14 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             continue
 
         if b.type == "Junction":
-            grid["->" + b.get_ref().to_pin_ref(0).to_str()] = (x, y)
+            grid["->" + b.get_ref().to_pin_ref(0).to_str()] = (x+5, y+5)
 
-            grid["->" + b.get_ref().to_pin_ref(1).to_str()] = (x, y)
-            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x, y)
-            grid[b.get_ref().to_pin_ref(1).to_str() + "->"] = (x, y)
-            grid[b.get_ref().to_pin_ref(2).to_str() + "->"] = (x, y)
+            grid["->" + b.get_ref().to_pin_ref(1).to_str()] = (x+5, y+5)
+            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x+5, y+5)
+            grid[b.get_ref().to_pin_ref(1).to_str() + "->"] = (x+5, y+5)
+            grid[b.get_ref().to_pin_ref(2).to_str() + "->"] = (x+5, y+5)
             ctx.move_to(x, y)
-            ctx.arc(x, y, 2, 0, math.pi * 2)
+            ctx.arc(x+5, y+5, 2, 0, math.pi * 2)
             ctx.fill()
 
             continue
@@ -133,7 +142,20 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         ctx.set_line_width(1)
         ios = max(len(b.inputs), len(b.outputs))
         height = 15 * ios
-        width = max(tw + 10, 20)
+
+        left_w = 0
+        for w in b.inputs:
+            txt = make_text(ctx, w.name, fd=pin_font)
+            dx, dy = txt.get_pixel_size()
+            left_w = max(dy, left_w)
+
+        right_w = 0
+        for w in b.outputs:
+            txt = make_text(ctx, w.name, fd=pin_font)
+            dx, dy = txt.get_pixel_size()
+            right_w = max(dy, right_w)
+
+        width = max(tw, left_w + right_w) + 10
 
         ctx.move_to(x+4, y)
         ctx.line_to(x, y)
@@ -147,7 +169,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
         pad_size = 8
         pad_space = 15
-        pad_start_y = 1
+        pad_start_y = 6
 
         io_x = x - pad_size
         io_y = y + pad_start_y
@@ -157,9 +179,9 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.set_source_rgb(0, 0, 1)
             ctx.fill()
             ctx.move_to(io_x + 10, io_y + 4)
-            print_text(ctx, i.name)
+            print_text(ctx, i.name, fd=pin_font)
 
-            grid["->" + b.get_ref().to_pin_ref(j).to_str()] = (io_x, io_y + 4)
+            grid["->" + b.get_ref().to_pin_ref(j).to_str()] = (io_x+7, io_y + 4)
 
             io_y += pad_space
 
@@ -176,7 +198,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.fill()
 
             ctx.move_to(io_x - 2, io_y + 4)
-            print_text(ctx, o.name, right=True)
+            print_text(ctx, o.name, right=True, fd=pin_font)
 
             io_y += pad_space
 
