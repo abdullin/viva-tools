@@ -91,14 +91,14 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         # print(b.type)
 
         if b.type == "Input":
-            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x + 20, y+5)
+            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x + 10, y+5)
 
             ctx.set_source_rgb(1, 0, 0)
             ctx.move_to(x, y +1)
-            ctx.rel_line_to(16, 0)
+            ctx.rel_line_to(5, 0)
             ctx.rel_line_to(4, 4)
             ctx.rel_line_to(-4, 4)
-            ctx.rel_line_to(-16, 0)
+            ctx.rel_line_to(-5, 0)
             ctx.close_path()
             ctx.stroke()
 
@@ -113,14 +113,14 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.set_source_rgb(1, 0, 0)
             ctx.move_to(x, y+5)
             ctx.rel_line_to(4, -4)
-            ctx.rel_line_to(16, 0)
+            ctx.rel_line_to(5, 0)
             ctx.rel_line_to(0, 9)
-            ctx.rel_line_to(-16, 0)
+            ctx.rel_line_to(-5, 0)
             ctx.rel_line_to(-4, -4)
             ctx.close_path()
             ctx.stroke()
 
-            ctx.move_to(x + 24, y+5)
+            ctx.move_to(x + 15, y+5)
             print_text(ctx, b.inputs[0].name)
             continue
 
