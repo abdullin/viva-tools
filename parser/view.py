@@ -108,6 +108,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             continue
 
         if b.type == "Output":
+            x+= 10
             ref = "->" + b.get_ref().to_pin_ref(0).to_str()
             grid[ref] = (x, y+5)
             ctx.set_source_rgb(1, 0, 0)
@@ -148,19 +149,23 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         if ios == 1:
             height+=5
 
-        left_w = 0
-        for w in b.inputs:
+
+        left_w = [0] * ios
+        for i,w in enumerate(b.inputs):
             txt = make_text(ctx, w.name, fd=pin_font)
             dw, dh = txt.get_pixel_size()
-            left_w = max(dw, left_w)
+            left_w[i] = dw
 
-        right_w = 0
-        for w in b.outputs:
+        right_w = [0] * ios
+        for i,w in enumerate(b.outputs):
             txt = make_text(ctx, w.name, fd=pin_font)
             dw, dh = txt.get_pixel_size()
-            right_w = max(dw, right_w)
+            right_w[i] = dw
 
-        width = max(tw, left_w + right_w) + 10
+        width = tw + 15
+        for l, w in zip(left_w, right_w):
+            width = max(width, l + w + 10)
+
 
         ctx.move_to(x+4, y)
         ctx.line_to(x, y)
