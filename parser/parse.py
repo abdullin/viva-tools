@@ -15,13 +15,13 @@ def extract_pins(line: str) -> List[Pin]:
     result = []
 
     pairs = clean.split(",")
-    for p in pairs:
+    for i, p in enumerate(pairs):
         pair = p.strip().split(" ")
         if len(pair)!=2:
             raise ValueError(f"problem splitting pairs from '{line}'")
         type = pair[0].strip()
         name = pair[1].strip()
-        p = Pin(type, name)
+        p = Pin(type, name, i)
         result.append(p)
     return result
 

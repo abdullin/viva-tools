@@ -11,6 +11,7 @@ class Pin:
     """describes symbol pin: symbol type and pin name"""
     type: str
     name: str
+    num: int
 
 
 @dataclass

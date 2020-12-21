@@ -83,9 +83,6 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         pc.show_layout(ctx, lay)
 
     for b in obj.behavior:
-
-
-
         x, y = b.gui.x * 5, b.gui.y * 5
 
         # print(b.type)
@@ -137,6 +134,16 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.fill()
 
             continue
+
+        if b.type == "ListIn":
+            o1, o2 = b.outputs
+            b.outputs = [o2, o1]
+
+        if b.type == "ListOut":
+            o1, o2 = b.inputs
+            b.inputs = [o2,o1]
+
+
 
         ctx.move_to(x + 6, y)
         tw, th = print_text(ctx, b.type.strip('"'), fd=behavior_label)
@@ -203,7 +210,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.move_to(io_x + 10, io_y + 4)
             print_text(ctx, i.name, fd=pin_font)
 
-            grid["->" + b.get_ref().to_pin_ref(j).to_str()] = (io_x+7, io_y + 4)
+            grid["->" + b.get_ref().to_pin_ref(i.num).to_str()] = (io_x+7, io_y + 4)
 
             io_y += pad_space
 
@@ -227,7 +234,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.rectangle(io_x, io_y, pad_size, pad_size)
 
             ctx.set_source_rgb(0, 0, 1)
-            grid[b.get_ref().to_pin_ref(j).to_str() + "->"] = (io_x, io_y + 4)
+            grid[b.get_ref().to_pin_ref(o.num).to_str() + "->"] = (io_x, io_y + 4)
             ctx.fill()
 
             ctx.move_to(io_x - 2, io_y + 4)
