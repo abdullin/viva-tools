@@ -123,14 +123,13 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             continue
 
         if b.type == "Junction":
-            grid["->" + b.get_ref().to_pin_ref(0).to_str()] = (x+5, y+5)
+            grid["->" + b.get_ref().to_pin_ref(0).to_str()] = (x, y)
 
-            grid["->" + b.get_ref().to_pin_ref(1).to_str()] = (x+5, y+5)
-            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x+5, y+5)
-            grid[b.get_ref().to_pin_ref(1).to_str() + "->"] = (x+5, y+5)
-            grid[b.get_ref().to_pin_ref(2).to_str() + "->"] = (x+5, y+5)
-            ctx.move_to(x, y)
-            ctx.arc(x+5, y+5, 2, 0, math.pi * 2)
+            grid["->" + b.get_ref().to_pin_ref(1).to_str()] = (x, y)
+            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x, y)
+            grid[b.get_ref().to_pin_ref(1).to_str() + "->"] = (x, y)
+            grid[b.get_ref().to_pin_ref(2).to_str() + "->"] = (x, y)
+            ctx.arc(x, y, 2, 0, math.pi * 2)
             ctx.fill()
 
             continue
