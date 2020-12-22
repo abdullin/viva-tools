@@ -68,7 +68,7 @@ print(max_x, max_y)
 with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     ctx = cairo.Context(surface)
 
-    grid = {}
+    grid = draw.Grid()
 
     ctx.move_to(10, 10)
     print_text(ctx, obj.proto.type, fd=header_font)
@@ -88,7 +88,8 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         # print(b.type)
 
         if b.type == "Input":
-            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x + 10, y+5)
+            # sheet input is output on the grid
+            grid.add_output(b.get_ref(), 0, (x + 10, y + 5))
 
             ctx.set_source_rgb(1, 0, 0)
             ctx.move_to(x, y +1)
@@ -106,8 +107,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
         if b.type == "Output":
             x+= 10
-            ref = "->" + b.get_ref().to_pin_ref(0).to_str()
-            grid[ref] = (x, y+5)
+            grid.add_input(b.get_ref(), 0, (x, y + 5))
             ctx.set_source_rgb(1, 0, 0)
             ctx.move_to(x, y+5)
             ctx.rel_line_to(4, -4)
@@ -123,12 +123,9 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             continue
 
         if b.type == "Junction":
-            grid["->" + b.get_ref().to_pin_ref(0).to_str()] = (x, y)
 
-            grid["->" + b.get_ref().to_pin_ref(1).to_str()] = (x, y)
-            grid[b.get_ref().to_pin_ref(0).to_str() + "->"] = (x, y)
-            grid[b.get_ref().to_pin_ref(1).to_str() + "->"] = (x, y)
-            grid[b.get_ref().to_pin_ref(2).to_str() + "->"] = (x, y)
+            grid.add_junction(b.get_ref(), (x, y))
+
             ctx.arc(x, y, 2, 0, math.pi * 2)
             ctx.fill()
 
@@ -209,7 +206,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.move_to(io_x + 10, io_y + 4)
             print_text(ctx, i.name, fd=pin_font)
 
-            grid["->" + b.get_ref().to_pin_ref(i.num).to_str()] = (io_x+7, io_y + 4)
+            grid.add_input(b.get_ref(), i.num, (io_x + 7, io_y + 4))
 
             io_y += pad_space
 
@@ -233,7 +230,8 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.rectangle(io_x, io_y, pad_size, pad_size)
 
             ctx.set_source_rgb(0, 0, 1)
-            grid[b.get_ref().to_pin_ref(o.num).to_str() + "->"] = (io_x, io_y + 4)
+
+            grid.add_output(b.get_ref(), o.num, (io_x, io_y + 4))
             ctx.fill()
 
             ctx.move_to(io_x - 2, io_y + 4)
@@ -243,21 +241,23 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
     for n in obj.net:
         points = []
-        input = "->" + n.input.to_str()
-        if input in grid:
-            points.append(grid[input])
+
+        net_start = grid.locate_output(n.output)
+        if net_start:
+            points.append(net_start)
         else:
-            print(f"NO grid for '{input}'")
+            print(f"No input pin '{n.input}' for net")
 
         for p in n.gui:
             points.append((p.x * 5, p.y * 5))
 
-        output = n.output.to_str() + "->"
+        net_end = grid.locate_input(n.input)
 
-        if output in grid:
-            points.append(grid[output])
+
+        if net_end:
+            points.append(net_end)
         else:
-            print(f"NO grid for '{output}'")
+            print(f"No output pin '{n.output}' for net")
 
         draw_net(ctx, points)
 

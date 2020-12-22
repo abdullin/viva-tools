@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Tuple, Dict, Optional, Any
+from enum import Enum
 
 @dataclass
 class Pos:
@@ -14,10 +15,15 @@ class Pin:
     num: int
 
 
+class PinType(Enum):
+    IN = 1
+    OUT = 2
+    ANY = 9
+
 @dataclass
 class PinRef:
     """Identifies a pin on the specific symbol instance"""
-    type: str # object type
+    type: str # object type,
     id: str # object ID (scoped by the type)
     io_num: int # input/output pin number
 
@@ -30,6 +36,9 @@ class PinRef:
 
     def __hash__(self):
         return hash((self.type, self.id, self.io_num))
+
+    def __eq__(self, other: 'PinRef'):
+        return self.id == other.id and self.type == other.type and self.io_num == other.io_num
 @dataclass
 class SymbolRef:
     """uniquely identifies symbol reference: symbol type and id"""
@@ -42,8 +51,11 @@ class SymbolRef:
             out += ":" + self.id
         return out
 
-    def to_pin_ref(self, io_num) -> PinRef:
-        return PinRef(self.type, self.id, io_num)
+    def __hash__(self):
+        return hash((self.type, self.id))
+
+    def to_pin_ref(self, io_num: int, kind: PinType) -> PinRef:
+        return PinRef(self.type, self.id, io_num, kind)
 
 
 @dataclass
@@ -60,6 +72,7 @@ class Proto:
 
 @dataclass
 class Transport:
+    """Transport connects output of one symbol to an input of another"""
     input: PinRef
     output: PinRef
     gui: List[Pos]

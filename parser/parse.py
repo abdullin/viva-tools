@@ -95,8 +95,14 @@ def parse_transport_def(text) -> Transport:
     if not m:
         raise ValueError(f"Unexpected net: {text}")
     gui = extract_attr_gui(m.group('attributes'))
+    # output from something is our input and vise versa
+
+    "transport goes INPUT -> OUTPUT"
     input = parse_net_reference(m.group('left'))
     output = parse_net_reference(m.group('right'))
+
+    if gui:
+        gui.reverse()
 
     return Transport(input, output, gui)
 
