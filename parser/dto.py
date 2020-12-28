@@ -90,6 +90,9 @@ class Object:
     texts: List[Text]
     net: List[Transport]
 
+    inputs: List[Proto]
+    outputs: List[Proto]
+
 @dataclass
 class Dataset:
     name: str

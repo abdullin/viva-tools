@@ -155,7 +155,22 @@ def parse_object_def(l, body) -> Object:
     prototypes = [parse_proto(x) for x in proto_joined]
     net = [parse_transport_def(x) for x in body['behavior']]
     texts = [parse_proto_text(x) for x in body['text']]
-    return Object(proto, prototypes, texts, net)
+
+    rest = []
+    inputs = []
+    outputs = []
+
+    for x in prototypes:
+        if x.type == "Input":
+            inputs.append(x)
+            continue
+        if x.type == "Output":
+            outputs.append(x)
+            continue
+        rest.append(x)
+
+
+    return Object(proto, rest, texts, net, inputs, outputs)
 
 
 def parse_dataset(l) -> Dataset:

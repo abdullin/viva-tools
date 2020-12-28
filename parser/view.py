@@ -82,45 +82,46 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         lay.set_text(b.text)
         pc.show_layout(ctx, lay)
 
-    for b in obj.behavior:
+    for b in obj.inputs:
+        x, y = b.gui.x * 5, b.gui.y * 5
+        # sheet input is output on the grid
+        grid.add_output(b.get_ref(), 0, (x + 10, y + 5))
+
+        ctx.set_line_width(1)
+        ctx.set_source_rgb(1, 0, 0)
+        ctx.move_to(x, y +1)
+        ctx.rel_line_to(5, 0)
+        ctx.rel_line_to(4, 4)
+        ctx.rel_line_to(-4, 4)
+        ctx.rel_line_to(-5, 0)
+        ctx.close_path()
+        ctx.stroke()
+
+        ctx.move_to(x - 4, y+5)
+        print_text(ctx, b.outputs[0].name, right=True)
+
+    for b in obj.outputs:
         x, y = b.gui.x * 5, b.gui.y * 5
 
-        # print(b.type)
+        x += 10
+        grid.add_input(b.get_ref(), 0, (x, y + 5))
 
-        if b.type == "Input":
-            # sheet input is output on the grid
-            grid.add_output(b.get_ref(), 0, (x + 10, y + 5))
+        ctx.set_line_width(1)
+        ctx.set_source_rgb(1, 0, 0)
+        ctx.move_to(x, y + 5)
+        ctx.rel_line_to(4, -4)
+        ctx.rel_line_to(5, 0)
+        ctx.rel_line_to(0, 9)
+        ctx.rel_line_to(-5, 0)
+        ctx.rel_line_to(-4, -4)
+        ctx.close_path()
+        ctx.stroke()
 
-            ctx.set_source_rgb(1, 0, 0)
-            ctx.move_to(x, y +1)
-            ctx.rel_line_to(5, 0)
-            ctx.rel_line_to(4, 4)
-            ctx.rel_line_to(-4, 4)
-            ctx.rel_line_to(-5, 0)
-            ctx.close_path()
-            ctx.stroke()
+        ctx.move_to(x + 15, y + 5)
+        print_text(ctx, b.inputs[0].name)
 
-            ctx.move_to(x - 4, y+5)
-            print_text(ctx, b.outputs[0].name, right=True)
-
-            continue
-
-        if b.type == "Output":
-            x+= 10
-            grid.add_input(b.get_ref(), 0, (x, y + 5))
-            ctx.set_source_rgb(1, 0, 0)
-            ctx.move_to(x, y+5)
-            ctx.rel_line_to(4, -4)
-            ctx.rel_line_to(5, 0)
-            ctx.rel_line_to(0, 9)
-            ctx.rel_line_to(-5, 0)
-            ctx.rel_line_to(-4, -4)
-            ctx.close_path()
-            ctx.stroke()
-
-            ctx.move_to(x + 15, y+5)
-            print_text(ctx, b.inputs[0].name)
-            continue
+    for b in obj.behavior:
+        x, y = b.gui.x * 5, b.gui.y * 5
 
         if b.type == "Junction":
 
