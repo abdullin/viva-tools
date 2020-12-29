@@ -136,6 +136,8 @@ def parse_proto(l:str) -> Proto:
         gui.x += 1
         gui.y += 1
 
+
+
     return Proto(ref.type, ref.id, inputs, outputs, attrs, gui)
 
 
@@ -162,6 +164,9 @@ def parse_object_def(l, body) -> Object:
 
     for x in prototypes:
         if x.type == "Input":
+            # reposition input pos to the transport location
+            x.pos.x+=2
+            x.pos.y+=1
             inputs.append(x)
             continue
         if x.type == "Output":

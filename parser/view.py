@@ -85,19 +85,20 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     for b in obj.inputs:
         x, y = b.pos.x * 5, b.pos.y * 5
         # sheet input is output on the grid
-        grid.add_output(b.get_ref(), 0, (x + 10, y + 5))
+        grid.add_output(b.get_ref(), 0, (x, y))
 
         ctx.set_line_width(1)
         ctx.set_source_rgb(1, 0, 0)
-        ctx.move_to(x, y +1)
-        ctx.rel_line_to(5, 0)
-        ctx.rel_line_to(4, 4)
+        ctx.move_to(x, y)
+
         ctx.rel_line_to(-4, 4)
         ctx.rel_line_to(-5, 0)
+        ctx.rel_line_to(0, -8)
+        ctx.rel_line_to(5, 0)
         ctx.close_path()
         ctx.stroke()
 
-        ctx.move_to(x - 4, y+5)
+        ctx.move_to(x - 12, y)
         print_text(ctx, b.outputs[0].name, right=True)
 
     for b in obj.outputs:
