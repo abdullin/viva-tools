@@ -162,13 +162,16 @@ def parse_object_def(l, body) -> Object:
             # reposition input pos to the transport location
             x.pos.x+=2
             x.pos.y+=1
-            inputs.append(x)
+
+            h = Header(x.outputs[0].type, x.outputs[0].name, x.id, x.pos, x.attrs)
+            inputs.append(h)
             continue
         if x.type == "Output":
             # move pos to the real transport location
             x.pos.x += 2
             x.pos.y += 1
-            outputs.append(x)
+            h = Header(x.inputs[0].type, x.inputs[0].name, x.id, x.pos, x.attrs)
+            outputs.append(h)
             continue
         if x.type == "Junction":
             x.pos.x += 1

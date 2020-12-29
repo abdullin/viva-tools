@@ -85,7 +85,8 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     for b in obj.inputs:
         x, y = b.pos.x * 5, b.pos.y * 5
         # sheet input is output on the grid
-        grid.add_output(b.get_ref(), 0, (x, y))
+        ref = SymbolRef("Input", b.id)
+        grid.add_output(ref, 0, (x, y))
 
         ctx.set_line_width(1)
         ctx.set_source_rgb(1, 0, 0)
@@ -99,12 +100,14 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         ctx.stroke()
 
         ctx.move_to(x - 12, y)
-        print_text(ctx, b.outputs[0].name, right=True)
+        print_text(ctx, b.name, right=True)
 
     for b in obj.outputs:
         x, y = b.pos.x * 5, b.pos.y * 5
 
-        grid.add_input(b.get_ref(), 0, (x, y ))
+        ref = SymbolRef("Output", b.id)
+
+        grid.add_input(ref, 0, (x, y ))
 
 
         ctx.set_line_width(1)
@@ -119,7 +122,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         ctx.stroke()
 
         ctx.move_to(x + 12, y)
-        print_text(ctx, b.inputs[0].name)
+        print_text(ctx, b.name)
     for b in obj.junctions:
         x, y = b.pos.x * 5, b.pos.y * 5
         grid.add_junction(b.get_ref(), (x, y))

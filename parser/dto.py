@@ -79,6 +79,13 @@ class Transport:
     output: PinRef
     gui: List[Pos]
 
+@dataclass
+class Header:
+    type: str
+    name: str
+    id: str
+    pos: Pos
+    attrs: Dict
 
 @dataclass
 class Text:
@@ -92,8 +99,8 @@ class Object:
     texts: List[Text]
     net: List[Transport]
 
-    inputs: List[Proto]
-    outputs: List[Proto]
+    inputs: List[Header]
+    outputs: List[Header]
     junctions: List[Proto]
 
 @dataclass

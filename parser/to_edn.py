@@ -53,17 +53,24 @@ def to_edn(f: File):
         result.append(proto_to_edn(x))
 
     for x in f.objects:
-        bs = [proto_to_edn(x) for x in x.inputs + x.outputs + x.behavior]
+
+
+        bs = [proto_to_edn(x) for x in x.behavior]
+        inputs = [header_to_edn(x, True) for x in x.inputs]
+        outputs = [header_to_edn(x, False) for x in x.outputs]
         ns = [net_to_edn(x) for x in x.net]
         texts = [text_to_edn(x) for x in x.texts]
         js = [proto_to_edn(x) for x in x.junctions]
-        result.append((kw("object"), proto_to_edn(x.proto), bs + texts + js + ns))
+        result.append((kw("object"), proto_to_edn(x.proto), inputs + outputs + bs + texts + js + ns))
 
     return result
 
 
 def pin_to_edn(x: Pin):
     return (x.type, x.name)
+
+def header_to_edn(x: Header, input: bool):
+    return (kw("input" if input else "output"),x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs)
 
 def proto_to_edn(x: Proto):
     attrs = {}
