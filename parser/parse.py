@@ -131,12 +131,6 @@ def parse_proto(l:str) -> Proto:
             raise ValueError("Prototype is expected to have one coord pair")
         gui = gui[0]
 
-    # reposition junction at the real center
-    if ref.type == "Junction":
-        gui.x += 1
-        gui.y += 1
-
-
 
     return Proto(ref.type, ref.id, inputs, outputs, attrs, gui)
 
@@ -177,6 +171,8 @@ def parse_object_def(l, body) -> Object:
             outputs.append(x)
             continue
         if x.type == "Junction":
+            x.pos.x += 1
+            x.pos.y += 1
             junctions.append(x)
             continue
         rest.append(x)
