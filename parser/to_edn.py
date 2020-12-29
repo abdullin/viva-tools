@@ -53,10 +53,11 @@ def to_edn(f: File):
         result.append(proto_to_edn(x))
 
     for x in f.objects:
-        bs = [proto_to_edn(x) for x in x.behavior]
+        bs = [proto_to_edn(x) for x in x.inputs + x.outputs + x.behavior]
         ns = [net_to_edn(x) for x in x.net]
         texts = [text_to_edn(x) for x in x.texts]
-        result.append((kw("object"), proto_to_edn(x.proto), bs + texts + ns))
+        js = [proto_to_edn(x) for x in x.junctions]
+        result.append((kw("object"), proto_to_edn(x.proto), bs + texts + js + ns))
 
     return result
 

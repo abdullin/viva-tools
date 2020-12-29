@@ -16,7 +16,8 @@ def sep():
 @click.option("--create-missing", is_flag=True)
 @click.option("--format", type=str, default="edn")
 @click.option("--detailed", is_flag=True)
-def main(create_missing, format, detailed):
+@click.option("--max-diffs", default=1000)
+def main(create_missing, format, detailed, max_diffs=1000):
 
     if format == "edn":
         import to_edn as target
@@ -37,6 +38,8 @@ def main(create_missing, format, detailed):
 
             if 'dexter-2018-hd.idl' in input:
                 continue
+            if 'dexter_main.ipg' in input:
+                continue
 
             if ext not in [".ipg", ".idl", ".sd"]:
                 continue
@@ -56,7 +59,12 @@ def main(create_missing, format, detailed):
             for a in assertions:
                 delta = dd.DeepDiff(a.expected, a.actual)
                 if delta:
-                    print(delta.pretty())
+                    pretty = delta.pretty()
+                    lines = pretty.splitlines()
+                    for l in lines[:max_diffs]:
+                        print(l)
+                    if len(lines)> max_diffs:
+                        print(f"... skipped more of {len(lines)-max_diffs}")
                     if detailed:
                         print("Expect: " + a.expected_str)
                         print("Actual: " + a.actual_str)

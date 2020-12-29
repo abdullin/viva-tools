@@ -11,7 +11,7 @@ from gi.repository import Pango as pango, PangoCairo as pc
 from parse import parse_text
 from dto import *
 
-data = parse_text("cases/dexter-2018-hd.idl")
+data = parse_text("cases/dexter_main.ipg")
 
 obj = data.objects[0]
 
