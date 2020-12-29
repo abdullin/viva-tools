@@ -12,13 +12,13 @@ def proto_to_dict(x: Proto) -> Dict:
         'attrs': x.attrs,
     }
 
-    if x.gui:
-        p['gui'] = (x.gui.x, x.gui.y)
+    if x.pos:
+        p['gui'] = (x.pos.x, x.pos.y)
     return p
 
 
 def text_to_dict(x: Text) -> Dict:
-    return { 'kind': 'text', 'gui': (x.gui.x, x.gui.y), 'text': x.text }
+    return { 'kind': 'text', 'gui': (x.pos.x, x.pos.y), 'text': x.text}
 
 def net_to_dict(x: Transport) -> Dict:
     guis = [(x.x, x.y) for x in x.gui]

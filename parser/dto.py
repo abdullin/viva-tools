@@ -65,7 +65,7 @@ class Proto:
     inputs: List[Pin]
     outputs: List[Pin]
     attrs: Dict
-    gui: Optional[Pos]
+    pos: Optional[Pos]
 
     def get_ref(self) -> SymbolRef:
         return SymbolRef(self.type, self.id)
@@ -81,7 +81,7 @@ class Transport:
 @dataclass
 class Text:
     text: str
-    gui: Pos
+    pos: Pos
 
 @dataclass
 class Object:

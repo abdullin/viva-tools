@@ -68,8 +68,8 @@ def proto_to_edn(x: Proto):
     attrs = {}
     for k in x.attrs:
         attrs[kw(k)] = x.attrs[k]
-    if x.gui:
-        attrs[kw('gui')] = (x.gui.x, x.gui.y)
+    if x.pos:
+        attrs[kw('gui')] = (x.pos.x, x.pos.y)
 
     inputs = [pin_to_edn(i) for i in x.inputs]
     outputs = [pin_to_edn(i) for i in x.outputs]
@@ -77,7 +77,7 @@ def proto_to_edn(x: Proto):
     return (kw("proto"), name, inputs, outputs, attrs)
 
 def text_to_edn(x: Text):
-    return ((kw("text"), (x.gui.x, x.gui.y), x.text))
+    return ((kw("text"), (x.pos.x, x.pos.y), x.text))
 
 def net_ref_to_edn(x: PinRef):
     t = x.type

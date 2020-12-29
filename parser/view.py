@@ -59,8 +59,8 @@ def draw_net(ctx, points):
 max_x, max_y = 0,0
 
 for x in obj.behavior:
-    max_x = max(max_x, x.gui.x)
-    max_y = max(max_y, x.gui.y)
+    max_x = max(max_x, x.pos.x)
+    max_y = max(max_y, x.pos.y)
 
 print(max_x, max_y)
 
@@ -74,7 +74,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     print_text(ctx, obj.proto.type, fd=header_font)
 
     for b in obj.texts:
-        ctx.move_to(b.gui.x * 5, b.gui.y * 5)
+        ctx.move_to(b.pos.x * 5, b.pos.y * 5)
         lay = pc.create_layout(ctx)
 
         fd = pango.font_description_from_string("Arial 8")
@@ -83,7 +83,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         pc.show_layout(ctx, lay)
 
     for b in obj.inputs:
-        x, y = b.gui.x * 5, b.gui.y * 5
+        x, y = b.pos.x * 5, b.pos.y * 5
         # sheet input is output on the grid
         grid.add_output(b.get_ref(), 0, (x + 10, y + 5))
 
@@ -101,7 +101,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         print_text(ctx, b.outputs[0].name, right=True)
 
     for b in obj.outputs:
-        x, y = b.gui.x * 5, b.gui.y * 5
+        x, y = b.pos.x * 5, b.pos.y * 5
 
         x += 10
         grid.add_input(b.get_ref(), 0, (x, y + 5))
@@ -121,7 +121,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         print_text(ctx, b.inputs[0].name)
 
     for b in obj.behavior:
-        x, y = b.gui.x * 5, b.gui.y * 5
+        x, y = b.pos.x * 5, b.pos.y * 5
 
         if b.type == "Junction":
 
