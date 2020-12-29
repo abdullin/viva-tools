@@ -161,6 +161,7 @@ def parse_object_def(l, body) -> Object:
     rest = []
     inputs = []
     outputs = []
+    junctions = []
 
     for x in prototypes:
         if x.type == "Input":
@@ -175,10 +176,13 @@ def parse_object_def(l, body) -> Object:
             x.pos.y += 1
             outputs.append(x)
             continue
+        if x.type == "Junction":
+            junctions.append(x)
+            continue
         rest.append(x)
 
 
-    return Object(proto, rest, texts, net, inputs, outputs)
+    return Object(proto, rest, texts, net, inputs, outputs, junctions)
 
 
 def parse_dataset(l) -> Dataset:

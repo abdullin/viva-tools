@@ -94,6 +94,7 @@ class Object:
 
     inputs: List[Proto]
     outputs: List[Proto]
+    junctions: List[Proto]
 
 @dataclass
 class Dataset:

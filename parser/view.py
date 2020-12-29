@@ -120,18 +120,14 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
         ctx.move_to(x + 12, y)
         print_text(ctx, b.inputs[0].name)
+    for b in obj.junctions:
+        x, y = b.pos.x * 5, b.pos.y * 5
+        grid.add_junction(b.get_ref(), (x, y))
+        ctx.arc(x, y, 2, 0, math.pi * 2)
+        ctx.fill()
 
     for b in obj.behavior:
         x, y = b.pos.x * 5, b.pos.y * 5
-
-        if b.type == "Junction":
-
-            grid.add_junction(b.get_ref(), (x, y))
-
-            ctx.arc(x, y, 2, 0, math.pi * 2)
-            ctx.fill()
-
-            continue
 
         if b.type == "ListIn":
             o1, o2 = b.outputs
