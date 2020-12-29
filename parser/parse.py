@@ -268,6 +268,10 @@ def parse_text(name) -> File:
 
             continue
 
+        if l.strip() == '':
+            i+=1
+            continue
+
 
         raise ValueError("Unknown line", l)
     return File(datasets, objects, prototypes)

@@ -11,7 +11,7 @@ from gi.repository import Pango as pango, PangoCairo as pc
 from parse import parse_text
 from dto import *
 
-data = parse_text("cases/dexter_main.ipg")
+data = parse_text("cases/dexter-2018-hd.idl")
 
 obj = data.objects[0]
 
@@ -189,8 +189,6 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         if len(b.inputs)==1:
             io_y+=5
         for j, i in enumerate(b.inputs):
-
-
             # push Done & Wait to the very botton
             if i.name == "Go":
 
@@ -223,7 +221,6 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
                 delta = len(b.inputs) - len(b.outputs)
                 if delta > 0:
                     io_y += pad_space * delta
-
 
             ctx.rectangle(io_x, io_y, pad_size, pad_size)
 
@@ -259,4 +256,3 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
         draw_net(ctx, points)
 
-        pass  # print(n.inpu)
