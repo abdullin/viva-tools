@@ -170,6 +170,9 @@ def parse_object_def(l, body) -> Object:
             inputs.append(x)
             continue
         if x.type == "Output":
+            # move pos to the real transport location
+            x.pos.x += 2
+            x.pos.y += 1
             outputs.append(x)
             continue
         rest.append(x)

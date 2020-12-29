@@ -104,21 +104,21 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     for b in obj.outputs:
         x, y = b.pos.x * 5, b.pos.y * 5
 
-        x += 10
-        grid.add_input(b.get_ref(), 0, (x, y + 5))
+        grid.add_input(b.get_ref(), 0, (x, y ))
+
 
         ctx.set_line_width(1)
         ctx.set_source_rgb(1, 0, 0)
-        ctx.move_to(x, y + 5)
+        ctx.move_to(x, y)
         ctx.rel_line_to(4, -4)
         ctx.rel_line_to(5, 0)
-        ctx.rel_line_to(0, 9)
+        ctx.rel_line_to(0, 8)
         ctx.rel_line_to(-5, 0)
         ctx.rel_line_to(-4, -4)
         ctx.close_path()
         ctx.stroke()
 
-        ctx.move_to(x + 15, y + 5)
+        ctx.move_to(x + 12, y)
         print_text(ctx, b.inputs[0].name)
 
     for b in obj.behavior:
