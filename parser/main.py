@@ -35,6 +35,9 @@ def main(create_missing, format, detailed):
 
             base, ext = os.path.splitext(input)
 
+            if 'dexter-2018-hd.idl' in input:
+                continue
+
             if ext not in [".ipg", ".idl", ".sd"]:
                 continue
             output = base +target_ext
