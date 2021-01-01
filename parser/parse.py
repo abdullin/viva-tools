@@ -183,7 +183,9 @@ def parse_object_def(l, body) -> Object:
         rest.append(x)
 
 
-    return Object(proto, rest, texts, net, inputs, outputs, junctions)
+    o =  Object(proto, rest, texts, net, inputs, outputs, junctions)
+    #print(o)
+    return o
 
 
 def parse_dataset(l) -> Dataset:
@@ -211,7 +213,7 @@ def parse_dataset(l) -> Dataset:
 
 
 
-def parse_text(name) -> File:
+def parse_text(name, detailed) -> File:
     with open(name) as f:
         lines = f.readlines()
 
@@ -264,6 +266,12 @@ def parse_text(name) -> File:
                         body[body_section].append((i,clean))
                 else:
                     head += l
+
+            if detailed:
+                print(f"HEAD: {head}")
+
+                for k in body:
+                    print(f"BODY[{k}]: {body[k]}")
 
             if body:
                 objects.append(parse_object_def(head, body))

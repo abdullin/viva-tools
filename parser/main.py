@@ -49,8 +49,7 @@ def main(create_missing, format, detailed, max_diffs=1000, filter=None):
                 continue
             output = base +target_ext
             print(output)
-            data = parse_text(input)
-
+            data = parse_text(input, detailed)
 
             if not os.path.exists(output):
                 if create_missing:
