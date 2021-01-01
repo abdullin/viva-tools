@@ -87,6 +87,7 @@ def parse_net_reference(text: str) -> PinRef:
     s1 = text.split('.')
     if len(s1) == 2:
         io_num = int(s1[1])
+    s1[0] = s1[0].strip('"')
     s2 = s1[0].split(':')
     if len(s2) == 2:
         id = s2[1]
