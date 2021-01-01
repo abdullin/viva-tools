@@ -64,7 +64,7 @@ def extract_attr_gui(text) -> List[Pos]:
         coords.append(Pos(int(ps[0]), int(ps[1])))
     return coords
 
-def parse_proto_text(text:str) ->Text:
+def parse_proto_text(text:str, linum:int) ->Text:
     if not text.startswith("Object Text;  //_GUI "):
         raise ValueError(f"Unexpected text start: {text}")
     items = text[21:].strip().split(',',2)
@@ -108,7 +108,7 @@ def parse_transport_def(text) -> Transport:
 
 
 
-def parse_proto(l:str) -> Proto:
+def parse_proto(l:str, linum: int = 0) -> Proto:
     m = obj_def.search(l)
 
     try:
@@ -121,7 +121,7 @@ def parse_proto(l:str) -> Proto:
         gui = extract_attr_gui(m.group('attributes'))
         attrs = extract_attributes(m.group('attributes'))
     except:
-        print(f"Problem parsing proto: <{l}>")
+        print(f"Problem parsing proto @{linum}: <{l}>")
         raise
 
 
@@ -141,16 +141,18 @@ def parse_object_def(l, body) -> Object:
     proto_strs = body['proto']
     # reassemble into lines
     proto_joined = []
-    for p in proto_strs:
+    for i,p in proto_strs:
         if p.startswith("//_") or p.startswith(",") or p.startswith("("):
-            proto_joined[-1] += "\n" + p
+            li, lp = proto_joined[-1]
+            lp += "\n" + p
+            proto_joined[-1] = (li, lp)
             continue
-        proto_joined.append(p)
+        proto_joined.append((i,p))
 
 
-    prototypes = [parse_proto(x) for x in proto_joined]
-    net = [parse_transport_def(x) for x in body['behavior']]
-    texts = [parse_proto_text(x) for x in body['text']]
+    prototypes = [parse_proto(x,i) for i,x in proto_joined]
+    net = [parse_transport_def(x) for i,x in body['behavior']]
+    texts = [parse_proto_text(x, i) for i, x in body['text']]
 
     rest = []
     inputs = []
@@ -238,7 +240,7 @@ def parse_text(name) -> File:
 
                 i+=1
                 if s.startswith("Object Text;"):
-                    body["text"].append(s)
+                    body["text"].append((i,s))
                     continue
 
                 if l.startswith("{"):
@@ -259,7 +261,7 @@ def parse_text(name) -> File:
                 if body_section:
                     clean = l.strip()
                     if clean:
-                        body[body_section].append(clean)
+                        body[body_section].append((i,clean))
                 else:
                     head += l
 

@@ -1,0 +1,10 @@
+Object ( List WholeLSB, List Out2) StripWholeLSB( List In1)
+//_ Attributes TreeGroup="BotControl"
+{
+ Object ( MSB021 Type) Input:E;  //_GUI 146,59
+ //_ Attributes PromoteToParentObject="False"
+ Object ( Variant "A<B", Variant "A=B", Variant "A>B"
+    , Bit ClkG, Bit AClr, Bit Done, Variant Busy) Compare
+    ( Variant A, Variant B, Bit ClkG, Bit AClr
+    , Variant Go, Bit Wait) ;  //_GUI 52,82
+}

@@ -1,0 +1,1 @@
+(:object (:proto "StripWholeLSB" [("List" "In1")] [("List" "WholeLSB") ("List" "Out2")] {:TreeGroup "BotControl"}) [])
