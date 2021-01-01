@@ -5,7 +5,7 @@ from typing import Optional, List, Tuple
 from dto import *
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
-obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>"]+)\s*(\((?P<inputs>[\n\w\s,]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
+obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:"<>=]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>"]+)\s*(\((?P<inputs>[\n\w\s,]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
 
 
 def extract_pins(line: str) -> List[Pin]:
@@ -19,8 +19,9 @@ def extract_pins(line: str) -> List[Pin]:
         pair = p.strip().split(" ")
         if len(pair)!=2:
             raise ValueError(f"problem splitting pairs from '{line}'")
-        type = pair[0].strip()
-        name = pair[1].strip()
+        type = pair[0].strip("\" ")
+        name = pair[1].strip("\" ")
+
         p = Pin(type, name, i)
         result.append(p)
     return result
