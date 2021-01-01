@@ -1,0 +1,110 @@
+Object OPKBitVideo( Variant WRADD, Bit Erase, "IDispatch*" DisplayWindow
+    , Bit StartFrames)
+//_ Attributes TreeGroup="BotMisc"
+{
+ //_ Object Prototypes
+ Object ( Variant WRADD) Input;  //_GUI 261,97
+ Object ( Bit Erase) Input:A;  //_GUI 261,103
+ Object ( "IDispatch*" DisplayWindow) Input:B;  //_GUI 79,115
+ //_ Attributes WidgetLeft="850",WidgetWidth="532",WidgetHeight="536",ActiveXWidget="XYGraphFormProj1::XYGraphForm",WidgetProperty="[Dispatch]",WidgetEvent="(Event)OnPaint",WidgetTop="15"
+ Object ( Bit StartFrames) Input:C;  //_GUI 24,153
+ //_ Attributes WidgetTop="380",WidgetLeft="350"
+ Object ( Bit Stopping) Stop( Bit Go, DWord Stop) ;  //_GUI 106,143
+ //_ Attributes System="X86CPU",Resource="TIMESLICE",KeepObject="One side"
+ Object ( DWord Stop) Input:D;  //_GUI 101,145
+ //_ Attributes PromoteToParentObject="False",Constant="0"
+ Object ( Bit Done, Bit Exception, DWord "Ret Val") "SBSComLibrary.AllocAligned"
+    ( Bit Go, DWord QWords) ;  //_GUI 28,129
+ //_ Attributes Primitive,System="X86UI",Resource="TIMESLICE",KeepObject="One side",ProgID="SBSComLibrary.AllocAligned"
+ Object ( Bit Done, Bit Exception) "SBSComLibrary.FreeAligned"( Bit Go
+    , "DWord*" AlignedAddress) ;  //_GUI 79,149
+ //_ Attributes Primitive,System="X86UI",Resource="TIMESLICE",KeepObject="One side",ProgID="SBSComLibrary.FreeAligned"
+ Object ( "DWord*" AlignedAddress) Input:E;  //_GUI 64,152
+ //_ Attributes PromoteToParentObject="False",Constant="0"
+ Object ( "DWord*" Out) $Cast( DWord Data, "DWord*" Type) ;  //_GUI 69,151
+ Object ( DWord Out1, DWord Out2, DWord Out3) Junction
+    ( DWord In0) ;  //_GUI 57,136
+ Object ( "IDispatch*" Out1, "IDispatch*" Out2, "IDispatch*" Out3) Junction:A
+    ( "IDispatch*" In0) ;  //_GUI 93,115
+ Object ( Bit Done, Bit Exception) "XYGraphForm::SetBitmapPTR"( Bit Go
+    , "IXYGraphForm*" MemberOf, DWord PTR) ;  //_GUI 197,120
+ //_ Attributes Primitive,System="X86UI",Resource="TIMESLICE",KeepObject="One side",ProgID="XYGraphFormProj1::XYGraphForm::SetBitmapPTR"
+ Object ( Bit Done, Bit Exception) "XYGraphForm::SetFormat"( Bit Go
+    , "IXYGraphForm*" MemberOf, DInt BitMapType, DInt Height, DInt Width) ;  //_GUI 28,152
+ //_ Attributes Primitive,System="X86UI",Resource="TIMESLICE",KeepObject="One side",ProgID="XYGraphFormProj1::XYGraphForm::SetFormat"
+ Object ( DWord Length) Input:F;  //_GUI 158,138
+ //_ Attributes Constant="262000",WidgetLeft="350",WidgetWidth="129",WidgetHeight="41",Widget="ScrollBar",WidgetHex="False",WidgetTop="335",PromoteToParentObject="False"
+ Object ( DWord QWords) Input:G;  //_GUI 24,133
+ //_ Attributes Constant="1000000",PromoteToParentObject="False"
+ Object ( DInt BitMapType) Input:H;  //_GUI 23,159
+ //_ Attributes Constant="3",PromoteToParentObject="False"
+ Object ( Bit Out1) AND( Bit In1, Bit In2) ;  //_GUI 120,129
+ //_ Attributes System="X86CPU"
+ Object ( Bit Out1) INVERT( Bit In1) ;  //_GUI 110,131
+ //_ Attributes System="X86CPU"
+ Object ( Variant Q) Reg( Variant D, Bit ClkG) ;  //_GUI 233,120
+ //_ Attributes System="X86CPU"
+ Object Output( Bit ResetTunnel) ;  //_GUI 267,170
+ //_ Attributes Resource="Global",PromoteToParentObject="False"
+ Object ( Bit Pulse) OneShot( Bit I, Bit ClkG) ;  //_GUI 240,168
+ //_ Attributes System="PEn"
+ Object ( Variant Q) Reg:A( Variant D, Bit ClkG) ;  //_GUI 194,152
+ //_ Attributes System="PEn"
+ Object ( Variant Q) Reg:B( Variant D, Bit ClkG) ;  //_GUI 213,153
+ //_ Attributes System="X86CPU"
+ Object ( Variant Out1, Variant Out2, Variant Out3) Junction:B
+    ( Variant In0) ;  //_GUI 207,154
+ Object ( Bit Out1, Bit Out2, Bit Out3) Junction:C
+    ( Bit In0) ;  //_GUI 259,170
+ Object ( Bit Done, Bit Exception) "OpalKellyInterface1.ReadBuffer"( Bit Go
+    , DWord RdBuf, DWord Length, DWord Read, DWord EndPointAddress) ;  //_GUI 163,131
+ //_ Attributes Primitive,System="X86UI",Resource="TIMESLICE",KeepObject="One side",ProgID="OpalKellyInterface1.ReadBuffer"
+ Object ( DWord EndPointAddress) Input:I;  //_GUI 159,144
+ //_ Attributes Constant="0xa1",PromoteToParentObject="False"
+ Object ( DWord Read) Input:J;  //_GUI 159,141
+ //_ Attributes Constant="0",PromoteToParentObject="False"
+ Object BitFBuffer( Variant WRADD, Bit NxtFrame, Bit Erase) ;  //_GUI 266,96
+ //_ Attributes System="PEn"
+ Object ( DInt Height) Input:K;  //_GUI 23,162
+ //_ Attributes Constant="512",WidgetHex="False",PromoteToParentObject="False"
+ Object ( DInt Width) Input:L;  //_GUI 23,165
+ //_ Attributes Constant="512",WidgetHex="False",WidgetLeft="20",WidgetWidth="129",WidgetHeight="41",Widget="ScrollBar",PromoteToParentObject="False"
+
+ //_ Behavior Topology
+ Stop.0 = "SBSComLibrary.FreeAligned".0;
+ Stop.1 = Input:D.0;
+ "SBSComLibrary.AllocAligned".0 = "XYGraphForm::SetFormat".0;  //_GUI 22,131, 22,149, 52,149
+ "SBSComLibrary.AllocAligned".1 = Input:G.0;
+ "SBSComLibrary.FreeAligned".0 = Stop.0;  //_GUI 79,141, 127,141
+ "SBSComLibrary.FreeAligned".1 = $Cast.0;
+ $Cast.0 = Junction.2;  //_GUI 58,156
+ $Cast.1 = Input:E.0;
+ Junction.0 = "SBSComLibrary.AllocAligned".2;
+ Junction:A.0 = Input:B.0;
+ "XYGraphForm::SetBitmapPTR".0 = "OpalKellyInterface1.ReadBuffer".0;  //_GUI 194,122, 194,133
+ "XYGraphForm::SetBitmapPTR".1 = Junction:A.1;  //_GUI 101,125, 101,116
+ "XYGraphForm::SetBitmapPTR".2 = Junction.0;  //_GUI 58,128
+ "XYGraphForm::SetFormat".0 = Input:C.0;
+ "XYGraphForm::SetFormat".1 = Junction:A.2;  //_GUI 10,157, 10,126, 94,126
+ "XYGraphForm::SetFormat".2 = Input:H.0;
+ "XYGraphForm::SetFormat".3 = Input:K.0;
+ "XYGraphForm::SetFormat".4 = Input:L.0;
+ AND.0 = "SBSComLibrary.AllocAligned".0;
+ AND.1 = INVERT.0;
+ INVERT.0 = Reg.0;  //_GUI 62,134, 62,165, 243,165
+ Reg.0 = "XYGraphForm::SetBitmapPTR".0;
+ Output.0 = Junction:C.1;
+ OneShot.0 = Junction:B.2;  //_GUI 208,170
+ Reg:A.0 = AND.0;  //_GUI 139,154, 139,132
+ Reg:B.0 = Junction:B.1;
+ Junction:B.0 = Reg:A.0;
+ Junction:C.0 = OneShot.0;
+ "OpalKellyInterface1.ReadBuffer".0 = Reg:B.0;  //_GUI 143,133, 143,149, 223,149
+ "OpalKellyInterface1.ReadBuffer".1 = Junction.1;  //_GUI 131,136, 131,137
+ "OpalKellyInterface1.ReadBuffer".2 = Input:F.0;
+ "OpalKellyInterface1.ReadBuffer".3 = Input:J.0;
+ "OpalKellyInterface1.ReadBuffer".4 = Input:I.0;
+ BitFBuffer.0 = Input.0;
+ BitFBuffer.1 = Junction:C.0;  //_GUI 260,101
+ BitFBuffer.2 = Input:A.0;
+}
