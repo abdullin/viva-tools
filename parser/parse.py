@@ -5,7 +5,7 @@ from typing import Optional, List, Tuple
 from dto import *
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
-obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:"<>=*]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>$"]+)\s*(\((?P<inputs>[\n\w\s,]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
+obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:"<>=*]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>$"]+)[\s\n]*(\((?P<inputs>[\n\w\s,*"]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
 pair_split = re.compile('(?P<type>([\w]+)|("[^"]+"))\s+(?P<name>([\w]+)|("[^"]+"))')
 
 def extract_pins(line: str) -> List[Pin]:
@@ -113,18 +113,26 @@ def parse_transport_def(text) -> Transport:
 def parse_proto(l:str, linum: int = 0) -> Proto:
     m = obj_def.search(l)
 
+    ## print("\nPROTO " + l)
+
     try:
         nam =  m.group('name').strip()
         assert nam != "("
 
         ref = parse_symbol_reference(nam)
         outputs = extract_pins(m.group('outputs'))
-        inputs = extract_pins(m.group('inputs'))
+
+        in_s = m.group('inputs')
+        inputs = extract_pins(in_s)
         gui = extract_attr_gui(m.group('attributes'))
         attrs = extract_attributes(m.group('attributes'))
     except:
         print(f"Problem parsing proto @{linum}: <{l}>")
         raise
+
+    if ref.type == "Junction":
+        if len(gui) != 1:
+            raise ValueError(f"Junction at {linum} should have gui: {l}")
 
 
 
@@ -150,6 +158,9 @@ def parse_object_def(l, body) -> Object:
             proto_joined[-1] = (li, lp)
             continue
         proto_joined.append((i,p))
+
+
+    #print(proto_joined)
 
 
     prototypes = [parse_proto(x,i) for i,x in proto_joined]
@@ -256,11 +267,10 @@ def parse_text(name, detailed=False) -> File:
                 if s == "//_ Behavior Topology":
                     body_section = 'behavior'
                     continue
-                if body_section and l == "}":
+                if body_section and s == "}":
                     break
                 if not body_section and l.endswith(";"):
                     break
-
 
                 if body_section:
                     clean = l.strip()
