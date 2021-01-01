@@ -96,8 +96,7 @@ def net_ref_to_edn(x: PinRef):
 
 def net_to_edn(x: Transport):
     attrs = {}
-    if x.gui:
-        attrs[kw('gui')] = [(x.x,x.y) for x in x.gui]
+    pos = [(x.x,x.y) for x in x.gui]
     input = net_ref_to_edn(x.input)
     output = net_ref_to_edn(x.output)
-    return (kw("net"), input, output, attrs)
+    return (kw("net"), input, output, pos, attrs)
