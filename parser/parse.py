@@ -6,7 +6,7 @@ from dto import *
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
 obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:"<>=*]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>$"]+)\s*(\((?P<inputs>[\n\w\s,]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
-
+pair_split = re.compile('(?P<type>([\w]+)|("[^"]+"))\s+(?P<name>([\w]+)|("[^"]+"))')
 
 def extract_pins(line: str) -> List[Pin]:
     if not line:
@@ -16,11 +16,12 @@ def extract_pins(line: str) -> List[Pin]:
 
     pairs = clean.split(",")
     for i, p in enumerate(pairs):
-        pair = p.strip().split(" ")
-        if len(pair)!=2:
-            raise ValueError(f"problem splitting pairs from '{line}'")
-        type = pair[0].strip("\" ")
-        name = pair[1].strip("\" ")
+
+        match = pair_split.search(p)
+        if not match:
+            raise ValueError(f"problem splitting pair '{p}' from '{line}'")
+        type = match.group('type').strip("\" ")
+        name = match.group('name').strip("\" ")
 
         p = Pin(type, name, i)
         result.append(p)
