@@ -18,7 +18,8 @@ def sep():
 @click.option("--detailed", is_flag=True)
 @click.option("--max-diffs", default=1000)
 @click.option("--filter", type=str, default=None)
-def main(create_missing, format, detailed, max_diffs=1000, filter=None):
+@click.option("--canary", is_flag=True, default=False)
+def main(create_missing, format, detailed, max_diffs=1000, filter=None, canary=False):
 
     if format == "edn":
         import to_edn as target
@@ -40,9 +41,10 @@ def main(create_missing, format, detailed, max_diffs=1000, filter=None):
             if filter and filter not in input:
                 continue
 
-            if 'dexter-2018-hd.idl' in input:
+
+            if not canary and 'dexter-2018-hd.idl' in input:
                 continue
-            if 'dexter_main.ipg' in input:
+            if not canary and 'dexter_main.ipg' in input:
                 continue
 
             if ext not in [".ipg", ".idl", ".sd"]:
