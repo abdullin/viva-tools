@@ -116,7 +116,7 @@ def parse_proto(l:str, linum: int = 0) -> Proto:
     ## print("\nPROTO " + l)
 
     try:
-        nam =  m.group('name').strip()
+        nam =  m.group('name').strip('" ')
         assert nam != "("
 
         ref = parse_symbol_reference(nam)
