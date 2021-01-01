@@ -214,7 +214,7 @@ def parse_dataset(l) -> Dataset:
 
 
 
-def parse_text(name, detailed) -> File:
+def parse_text(name, detailed=False) -> File:
     with open(name) as f:
         lines = f.readlines()
 
