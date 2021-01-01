@@ -20,13 +20,13 @@
    (:input "Width" "DInt" "L" (25 166) {})
    (:output "ResetTunnel" "Bit" nil (269 171) {})
    (:proto "Stop" [("Bit" "Go") ("DWord" "Stop")] [("Bit" "Stopping")] {:gui (106 143)})
-   (:proto "\"SBSComLibrary.AllocAligned\"" [("Bit" "Go") ("DWord" "QWords")]
+   (:proto "SBSComLibrary.AllocAligned" [("Bit" "Go") ("DWord" "QWords")]
            [("Bit" "Done") ("Bit" "Exception") ("DWord" "Ret Val")] {:gui (28 129)})
-   (:proto "\"SBSComLibrary.FreeAligned\"" [("Bit" "Go") ("DWord*" "AlignedAddress")] [("Bit" "Done") ("Bit" "Exception")] {:gui (79 149)})
+   (:proto "SBSComLibrary.FreeAligned" [("Bit" "Go") ("DWord*" "AlignedAddress")] [("Bit" "Done") ("Bit" "Exception")] {:gui (79 149)})
    (:proto "$Cast" [("DWord" "Data") ("DWord*" "Type")] [("DWord*" "Out")] {:gui (69 151)})
-   (:proto "\"XYGraphForm" [("Bit" "Go") ("IXYGraphForm*" "MemberOf") ("DWord" "PTR")]
+   (:proto "XYGraphForm" [("Bit" "Go") ("IXYGraphForm*" "MemberOf") ("DWord" "PTR")]
            [("Bit" "Done") ("Bit" "Exception")] {:gui (197 120)})
-   (:proto "\"XYGraphForm"
+   (:proto "XYGraphForm"
            [("Bit" "Go")
             ("IXYGraphForm*" "MemberOf")
             ("DInt" "BitMapType")
@@ -39,7 +39,7 @@
    (:proto "OneShot" [("Bit" "I") ("Bit" "ClkG")] [("Bit" "Pulse")] {:gui (240 168)})
    (:proto "Reg:A" [("Variant" "D") ("Bit" "ClkG")] [("Variant" "Q")] {:gui (194 152)})
    (:proto "Reg:B" [("Variant" "D") ("Bit" "ClkG")] [("Variant" "Q")] {:gui (213 153)})
-   (:proto "\"OpalKellyInterface1.ReadBuffer\""
+   (:proto "OpalKellyInterface1.ReadBuffer"
            [("Bit" "Go")
             ("DWord" "RdBuf")
             ("DWord" "Length")

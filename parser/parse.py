@@ -83,6 +83,7 @@ def parse_symbol_reference(text: str) -> SymbolRef:
 def parse_net_reference(text: str) -> PinRef:
     io_num = 0
     id = None
+    text = text.strip('"')
     s1 = text.split('.')
     if len(s1) == 2:
         io_num = int(s1[1])
@@ -116,7 +117,7 @@ def parse_proto(l:str, linum: int = 0) -> Proto:
     ## print("\nPROTO " + l)
 
     try:
-        nam =  m.group('name').strip('" ')
+        nam =  m.group('name').strip(' "')
         assert nam != "("
 
         ref = parse_symbol_reference(nam)
