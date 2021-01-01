@@ -17,7 +17,8 @@ def sep():
 @click.option("--format", type=str, default="edn")
 @click.option("--detailed", is_flag=True)
 @click.option("--max-diffs", default=1000)
-def main(create_missing, format, detailed, max_diffs=1000):
+@click.option("--filter", type=str, default=None)
+def main(create_missing, format, detailed, max_diffs=1000, filter=None):
 
     if format == "edn":
         import to_edn as target
@@ -35,6 +36,9 @@ def main(create_missing, format, detailed, max_diffs=1000):
             input = os.path.join(path, name)
 
             base, ext = os.path.splitext(input)
+
+            if filter and filter not in input:
+                continue
 
             if 'dexter-2018-hd.idl' in input:
                 continue
