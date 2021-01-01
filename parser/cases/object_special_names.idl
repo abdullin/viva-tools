@@ -1,6 +1,7 @@
 Object ( List WholeLSB, List Out2) StripWholeLSB( List In1)
 //_ Attributes TreeGroup="BotControl"
 {
+ //_ Object Prototypes
  Object ( MSB021 Type) Input:E;  //_GUI 146,59
  //_ Attributes PromoteToParentObject="False"
  Object ( Variant "A<B", Variant "A=B", Variant "A>B"
