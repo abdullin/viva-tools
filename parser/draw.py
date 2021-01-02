@@ -12,8 +12,8 @@ class Grid:
         self.outputs = {}
         self.inputs = {}
 
-    def add_junction(self, ref: SymbolRef, pos):
-        self.junctions[ref.id] = pos
+    def add_junction(self, j: Junction, pos):
+        self.junctions[j.id] = pos
 
     def locate_output(self, r: PinRef):
         if r.type == "Junction":

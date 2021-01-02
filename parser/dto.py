@@ -88,6 +88,12 @@ class Header:
     attrs: Dict
 
 @dataclass
+class Junction:
+    type: str
+    id: str
+    pos: Pos
+
+@dataclass
 class Text:
     text: str
     pos: Pos
@@ -101,7 +107,7 @@ class Object:
 
     inputs: List[Header]
     outputs: List[Header]
-    junctions: List[Proto]
+    junctions: List[Junction]
 
 @dataclass
 class Dataset:

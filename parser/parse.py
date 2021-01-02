@@ -193,7 +193,9 @@ def parse_object_def(l, body) -> Object:
         if x.type == "Junction":
             x.pos.x += 1
             x.pos.y += 1
-            junctions.append(x)
+            if x.attrs:
+                raise ValueError("Junctions have attrs!")
+            junctions.append(Junction(x.inputs[0].type, x.id, x.pos))
             continue
         rest.append(x)
 

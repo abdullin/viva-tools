@@ -60,11 +60,13 @@ def to_edn(f: File):
         outputs = [header_to_edn(x, False) for x in x.outputs]
         ns = [net_to_edn(x) for x in x.net]
         texts = [text_to_edn(x) for x in x.texts]
-        js = [proto_to_edn(x) for x in x.junctions]
+        js = [junction_to_edn(x) for x in x.junctions]
         result.append((kw("object"), proto_to_edn(x.proto), inputs + outputs + bs + texts + js + ns))
 
     return result
 
+def junction_to_edn(j :Junction):
+    return (kw("junction"), j.id, j.type, (j.pos.x, j.pos.y))
 
 def pin_to_edn(x: Pin):
     return (x.type, x.name)

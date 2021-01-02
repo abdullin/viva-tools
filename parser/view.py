@@ -125,7 +125,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         print_text(ctx, b.name)
     for b in obj.junctions:
         x, y = b.pos.x * 5, b.pos.y * 5
-        grid.add_junction(b.get_ref(), (x, y))
+        grid.add_junction(b, (x, y))
         ctx.arc(x, y, 2, 0, math.pi * 2)
         ctx.fill()
 
