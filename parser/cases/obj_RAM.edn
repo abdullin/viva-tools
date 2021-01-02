@@ -8,15 +8,15 @@
      ("Wait" "Bit")]
     [("O" "Variant") ("Done" "Bit") ("Busy" "Bit")]
     {"TreeGroup" "CoreLib\\\\Memory"})
-  [(:input "Data" "Variant" nil (17 19) {})
-   (:input "Addr" "Variant" "A" (17 26) {})
-   (:input "WE" "Bit" "B" (17 46) {})
-   (:input "ClkG" "Bit" "C" (17 50) {})
-   (:input "Go" "Bit" "D" (17 54) {})
-   (:input "Wait" "Bit" "E" (162 62) {})
-   (:output "O" "Variant" nil (166 22) {})
-   (:output "Done" "Bit" "A" (166 35) {})
-   (:output "Busy" "Bit" "B" (18 64) {})
+  [(:input "i_Data" "Variant" (17 19) {})
+   (:input "i_Addr" "Variant" (17 26) {})
+   (:input "i_WE" "Bit" (17 46) {})
+   (:input "i_ClkG" "Bit" (17 50) {})
+   (:input "i_Go" "Bit" (17 54) {})
+   (:input "i_Wait" "Bit" (162 62) {})
+   (:output "o_O" "Variant" (166 22) {})
+   (:output "o_Done" "Bit" (166 35) {})
+   (:output "o_Busy" "Bit" (18 64) {})
    (:symbol "RAMSP" [("Data" "Variant") ("Addr" "Variant") ("ClkG" "Bit") ("WE" "Bit")]
             [("Data" "Variant")] (135 19) {})
    (:symbol "RegOnGo"
@@ -28,19 +28,6 @@
    (:symbol "INVERT" [("In1" "Bit")] [("Out" "Bit")] (35 31) {})
    (:symbol "AND:A" [("In1" "Variant") ("In2" "Variant") ("In3" "Variant")] [("Out1" "Variant")] (117 25) {})
    (:symbol "INVERT:A" [("In1" "Bit")] [("Out" "Bit")] (105 24) {})
-   (:text "Register the Address \non a Read to be used \nif a Wait comes on." (50 9))
-   (:text "If waiting, then switch the RAM's \naddress to the stored address, \nso if a read  Done is pending, we \nwill continue reading from the \nsame address."
-          (75 3))
-   (:text "Only write when Go, \nWE and not Busy." (107 12))
-   (:text "A Wait will keep a \nRead or a Write from \nstarting, but only a \nRead from completing."
-          (146 66))
-   (:text "Dones only come \nout after a Read." (160 27))
-   (:text "Reads and writes \nare synchronous." (132 10))
-   (:text "Don't need to store the \nGo on a write because \nwe don't need to send \nout a Done on a write."
-          (38 61))
-   (:text "The Mux won't effect writes (it \nwill be a passthrough) because \nwrites will only occur when we \nare not Busy which is the same \nas when we are not Waiting for \nthe RegOnGo object."
-          (73 60))
-   (:text "O is valid while \nDone is high." (160 12))
    (:junction "Variant" nil (55 26))
    (:junction "Bit" "A" (77 38))
    (:junction "Bit" "B" (34 54))
@@ -73,4 +60,17 @@
    (:net "Junction:B.0" "Input:D.0" [])
    (:net "Junction:C.0" "Input:B.0" [])
    (:net "Junction:D.0" "Input:C.0" [])
-   (:net "Junction:E.0" "RegOnGo.4" [(57 38)])])
+   (:net "Junction:E.0" "RegOnGo.4" [(57 38)])
+   (:text "Register the Address \non a Read to be used \nif a Wait comes on." (50 9))
+   (:text "If waiting, then switch the RAM's \naddress to the stored address, \nso if a read  Done is pending, we \nwill continue reading from the \nsame address."
+          (75 3))
+   (:text "Only write when Go, \nWE and not Busy." (107 12))
+   (:text "A Wait will keep a \nRead or a Write from \nstarting, but only a \nRead from completing."
+          (146 66))
+   (:text "Dones only come \nout after a Read." (160 27))
+   (:text "Reads and writes \nare synchronous." (132 10))
+   (:text "Don't need to store the \nGo on a write because \nwe don't need to send \nout a Done on a write."
+          (38 61))
+   (:text "The Mux won't effect writes (it \nwill be a passthrough) because \nwrites will only occur when we \nare not Busy which is the same \nas when we are not Waiting for \nthe RegOnGo object."
+          (73 60))
+   (:text "O is valid while \nDone is high." (160 12))])

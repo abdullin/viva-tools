@@ -83,7 +83,6 @@ class Transport:
 class Header:
     type: str
     name: str
-    id: str
     pos: Pos
     attrs: Dict
 

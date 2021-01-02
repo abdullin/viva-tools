@@ -65,7 +65,7 @@ def to_edn(f: File):
         hi = [pin_to_edn(i) for i in x.h_inputs]
         ho = [pin_to_edn(i) for i in x.h_outputs]
 
-        result.append((kw("module"), (x.name, hi, ho, x.attrs), inputs + outputs + bs + texts + js + ns))
+        result.append((kw("module"), (x.name, hi, ho, x.attrs), inputs + outputs + bs + js + ns + texts))
 
     return result
 
@@ -76,7 +76,7 @@ def pin_to_edn(x: Pin):
     return (x.name, x.type)
 
 def header_to_edn(x: Header, input: bool):
-    return (kw("input" if input else "output"),x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs)
+    return (kw("input" if input else "output"),x.name, x.type, (x.pos.x, x.pos.y), x.attrs)
 
 def symbol_to_edn(x: Proto):
     attrs = {}

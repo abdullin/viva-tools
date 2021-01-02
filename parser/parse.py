@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 from typing import Optional, List, Tuple
-
+from names import *
 from dto import *
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
@@ -117,6 +117,8 @@ def parse_proto(l:str, linum: int = 0) -> Proto:
 
     ## print("\nPROTO " + l)
 
+    names = Names()
+
     try:
         nam =  m.group('name').strip(' "')
         assert nam != "("
@@ -150,6 +152,8 @@ def parse_proto(l:str, linum: int = 0) -> Proto:
 def parse_object_def(l, body) -> Object:
     proto = parse_proto(l)
 
+    names = Names()
+
     proto_strs = body['proto']
     # reassemble into lines
     proto_joined = []
@@ -180,14 +184,18 @@ def parse_object_def(l, body) -> Object:
             x.pos.x+=2
             x.pos.y+=1
 
-            h = Header(x.outputs[0].type, x.outputs[0].name, x.id, x.pos, x.attrs)
+            name = names.add_input(x.outputs[0].name, x.id)
+            h = Header(x.outputs[0].type, name, x.pos, x.attrs)
+
             inputs.append(h)
             continue
         if x.type == "Output":
             # move pos to the real transport location
             x.pos.x += 2
             x.pos.y += 1
-            h = Header(x.inputs[0].type, x.inputs[0].name, x.id, x.pos, x.attrs)
+
+            name = names.add_output(x.inputs[0].name, x.id)
+            h = Header(x.inputs[0].type, name, x.pos, x.attrs)
             outputs.append(h)
             continue
         if x.type == "Junction":

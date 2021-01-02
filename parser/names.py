@@ -30,13 +30,13 @@ class Names:
 
 
 
-    def add_input(self, name: str, type: str, unique: str):
+    def add_input(self, name: str, unique: str):
         old = f'Input:{unique or ""}-0'
         new = f'i_{name}'
         return self.add_rename(old, new)
 
 
-    def add_output(self, name: str, type: str, unique: str):
+    def add_output(self, name: str, unique: str):
         old = f'Output:{unique or ""}-0'
         new = f'o_{name}'
         return self.add_rename(old, new)
