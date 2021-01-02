@@ -71,7 +71,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     grid = draw.Grid()
 
     ctx.move_to(10, 10)
-    print_text(ctx, obj.proto.type, fd=header_font)
+    print_text(ctx, obj.name, fd=header_font)
 
     for b in obj.texts:
         ctx.move_to(b.pos.x * 5, b.pos.y * 5)

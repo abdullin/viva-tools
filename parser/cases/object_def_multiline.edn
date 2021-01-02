@@ -1,1 +1,1 @@
-(:proto "MULT18X18S" [("BIN018" "A") ("BIN018" "B") ("Bit" "C") ("Bit" "CE") ("Bit" "R")] [("BIN036" "R")] {:System "X86CPU" :Resource "TIMESLICE"})
+(:proto "MULT18X18S" [("A" "BIN018") ("B" "BIN018") ("C" "Bit") ("CE" "Bit") ("R" "Bit")] [("R" "BIN036")] {:System "X86CPU" :Resource "TIMESLICE"})

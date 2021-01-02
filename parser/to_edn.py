@@ -70,10 +70,10 @@ def to_edn(f: File):
     return result
 
 def junction_to_edn(j :Junction):
-    return (kw("junction"), j.id, j.type, (j.pos.x, j.pos.y))
+    return (kw("junction"), j.type, j.id, (j.pos.x, j.pos.y))
 
 def pin_to_edn(x: Pin):
-    return (x.type, x.name)
+    return (x.name, x.type)
 
 def header_to_edn(x: Header, input: bool):
     return (kw("input" if input else "output"),x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs)
@@ -101,7 +101,7 @@ def proto_to_edn(x: Proto):
     return (kw("proto"), name, inputs, outputs, attrs)
 
 def text_to_edn(x: Text):
-    return ((kw("text"), (x.pos.x, x.pos.y), x.text))
+    return ((kw("text"), x.text, (x.pos.x, x.pos.y)))
 
 def net_ref_to_edn(x: PinRef):
     t = x.type
