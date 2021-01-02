@@ -55,7 +55,7 @@ def to_edn(f: File):
     for x in f.objects:
 
 
-        bs = [proto_to_edn(x) for x in x.behavior]
+        bs = [symbol_to_edn(x) for x in x.behavior]
         inputs = [header_to_edn(x, True) for x in x.inputs]
         outputs = [header_to_edn(x, False) for x in x.outputs]
         ns = [net_to_edn(x) for x in x.net]
@@ -77,6 +77,16 @@ def pin_to_edn(x: Pin):
 
 def header_to_edn(x: Header, input: bool):
     return (kw("input" if input else "output"),x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs)
+
+def symbol_to_edn(x: Proto):
+    attrs = {}
+    for k in x.attrs:
+        attrs[kw(k)] = x.attrs[k]
+
+    inputs = [pin_to_edn(i) for i in x.inputs]
+    outputs = [pin_to_edn(i) for i in x.outputs]
+    name = SymbolRef(x.type, x.id).to_str()
+    return (kw("symbol"), name, inputs, outputs, (x.pos.x, x.pos.y), attrs)
 
 def proto_to_edn(x: Proto):
     attrs = {}

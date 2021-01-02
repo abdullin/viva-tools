@@ -17,17 +17,17 @@
    (:output "O" "Variant" nil (166 22) {})
    (:output "Done" "Bit" "A" (166 35) {})
    (:output "Busy" "Bit" "B" (18 64) {})
-   (:proto "RAMSP" [("Variant" "Data") ("Variant" "Addr") ("Bit" "ClkG") ("Bit" "WE")]
-           [("Variant" "Data")] {:gui (135 19)})
-   (:proto "RegOnGo"
-           [("Variant" "D") ("Bit" "ClkG") ("Bit" "AClr") ("Bit" "Go") ("Bit" "Wait")]
-           [("Variant" "Q") ("Bit" "ClkG") ("Bit" "AClr") ("Bit" "Done") ("Bit" "Busy")]
-           {:gui (59 24)})
-   (:proto "AND" [("Bit" "In1") ("Bit" "In2")] [("Bit" "Out")] {:gui (47 32)})
-   (:proto "Mux" [("Variant" "A") ("Variant" "B") ("Bit" "S")] [("Variant" "O")] {:gui (80 21)})
-   (:proto "INVERT" [("Bit" "In1")] [("Bit" "Out")] {:gui (35 31)})
-   (:proto "AND:A" [("Variant" "In1") ("Variant" "In2") ("Variant" "In3")] [("Variant" "Out1")] {:gui (117 25)})
-   (:proto "INVERT:A" [("Bit" "In1")] [("Bit" "Out")] {:gui (105 24)})
+   (:symbol "RAMSP" [("Variant" "Data") ("Variant" "Addr") ("Bit" "ClkG") ("Bit" "WE")]
+            [("Variant" "Data")] (135 19) {})
+   (:symbol "RegOnGo"
+            [("Variant" "D") ("Bit" "ClkG") ("Bit" "AClr") ("Bit" "Go") ("Bit" "Wait")]
+            [("Variant" "Q") ("Bit" "ClkG") ("Bit" "AClr") ("Bit" "Done") ("Bit" "Busy")]
+            (59 24) {})
+   (:symbol "AND" [("Bit" "In1") ("Bit" "In2")] [("Bit" "Out")] (47 32) {})
+   (:symbol "Mux" [("Variant" "A") ("Variant" "B") ("Bit" "S")] [("Variant" "O")] (80 21) {})
+   (:symbol "INVERT" [("Bit" "In1")] [("Bit" "Out")] (35 31) {})
+   (:symbol "AND:A" [("Variant" "In1") ("Variant" "In2") ("Variant" "In3")] [("Variant" "Out1")] (117 25) {})
+   (:symbol "INVERT:A" [("Bit" "In1")] [("Bit" "Out")] (105 24) {})
    (:text (50 9) "Register the Address \non a Read to be used \nif a Wait comes on.")
    (:text (75 3) "If waiting, then switch the RAM's \naddress to the stored address, \nso if a read  Done is pending, we \nwill continue reading from the \nsame address.")
    (:text (107 12) "Only write when Go, \nWE and not Busy.")
