@@ -61,7 +61,11 @@ def to_edn(f: File):
         ns = [net_to_edn(x) for x in x.net]
         texts = [text_to_edn(x) for x in x.texts]
         js = [junction_to_edn(x) for x in x.junctions]
-        result.append((kw("object"), proto_to_edn(x.proto), inputs + outputs + bs + texts + js + ns))
+
+        hi = [pin_to_edn(i) for i in x.h_inputs]
+        ho = [pin_to_edn(i) for i in x.h_outputs]
+
+        result.append((kw("module"), (x.name, hi, ho, x.attrs), inputs + outputs + bs + texts + js + ns))
 
     return result
 

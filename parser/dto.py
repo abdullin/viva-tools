@@ -100,11 +100,13 @@ class Text:
 
 @dataclass
 class Object:
-    proto: Proto
+    name: str
+    h_inputs: List[Pin]
+    h_outputs: List[Pin]
+    attrs: Dict
     behavior: List[Proto]
     texts: List[Text]
     net: List[Transport]
-
     inputs: List[Header]
     outputs: List[Header]
     junctions: List[Junction]

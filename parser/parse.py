@@ -200,7 +200,7 @@ def parse_object_def(l, body) -> Object:
         rest.append(x)
 
 
-    o =  Object(proto, rest, texts, net, inputs, outputs, junctions)
+    o =  Object(proto.type, proto.inputs, proto.outputs, proto.attrs, rest, texts, net, inputs, outputs, junctions)
     #print(o)
     return o
 

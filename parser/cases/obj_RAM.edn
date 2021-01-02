@@ -1,13 +1,13 @@
-(:object
-  (:proto "RAM"
-          [("Variant" "Data")
-           ("Variant" "Addr")
-           ("Bit" "WE")
-           ("Bit" "ClkG")
-           ("Bit" "Go")
-           ("Bit" "Wait")]
-          [("Variant" "O") ("Bit" "Done") ("Bit" "Busy")]
-          {:TreeGroup "CoreLib\\\\Memory"})
+(:module
+  ("RAM"
+    [("Variant" "Data")
+     ("Variant" "Addr")
+     ("Bit" "WE")
+     ("Bit" "ClkG")
+     ("Bit" "Go")
+     ("Bit" "Wait")]
+    [("Variant" "O") ("Bit" "Done") ("Bit" "Busy")]
+    {"TreeGroup" "CoreLib\\\\Memory"})
   [(:input "Data" "Variant" nil (17 19) {})
    (:input "Addr" "Variant" "A" (17 26) {})
    (:input "WE" "Bit" "B" (17 46) {})
