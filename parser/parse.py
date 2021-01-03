@@ -3,8 +3,11 @@ from collections import defaultdict
 from dto import *
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
-obj_def = re.compile('Object (\((?P<outputs>[\n\w,\s\d\.:"<>=*]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>$"]+)[\s\n]*(\((?P<inputs>[\n\w\s,*"]+?)\))?[\s;]*(//_(?P<attributes>.*))?', re.MULTILINE)
+obj_def = re.compile(
+    'Object (\((?P<outputs>[\n\w,\s\d\.:"<>=*]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>$"]+)[\s\n]*(\((?P<inputs>[\n\w\s,*"]+?)\))?[\s;]*(//_(?P<attributes>.*))?',
+    re.MULTILINE)
 pair_split = re.compile('(?P<type>([\w]+)|("[^"]+"))\s+(?P<name>([\w]+)|("[^"]+"))')
+
 
 def extract_pins(line: str) -> List[Pin]:
     if not line:
@@ -26,8 +29,7 @@ def extract_pins(line: str) -> List[Pin]:
     return result
 
 
-
-def extract_attributes(text:str):
+def extract_attributes(text: str):
     if not text:
         return {}
 
@@ -51,6 +53,7 @@ def extract_attributes(text:str):
 
 net = re.compile("(?P<left>.+)( = )(?P<right>.+);(\s*//_(?P<attributes>.*))?")
 
+
 def extract_attr_gui(text) -> List[Pos]:
     if not text:
         return []
@@ -64,16 +67,18 @@ def extract_attr_gui(text) -> List[Pos]:
         coords.append(Pos(int(ps[0]), int(ps[1])))
     return coords
 
-def parse_proto_text(text:str, linum:int) ->Text:
+
+def parse_proto_text(text: str, linum: int) -> Text:
     if not text.startswith("Object Text;  //_GUI "):
         raise ValueError(f"Unexpected text start: {text}")
-    items = text[21:].strip().split(',',2)
-    return Text(items[2].replace("\u0001","\n"), Pos(int(items[0]), int(items[1])))
+    items = text[21:].strip().split(',', 2)
+    return Text(items[2].replace("\u0001", "\n"), Pos(int(items[0]), int(items[1])))
+
 
 def parse_symbol_reference(text: str) -> SymbolRef:
     id = None
     s = text.split(':')
-    if len(s)==2:
+    if len(s) == 2:
         id = s[1]
     return SymbolRef(s[0], id)
 
@@ -92,6 +97,7 @@ def parse_net_reference(text: str) -> PinRef:
     type = s2[0]
     return PinRef(type, id, io_num)
 
+
 def parse_transport_def(text) -> Transport:
     m = net.search(text)
     if not m:
@@ -109,12 +115,11 @@ def parse_transport_def(text) -> Transport:
     return Transport(input, output, gui)
 
 
-
-def parse_proto(l:str, linum: int = 0) -> Proto:
+def parse_proto(l: str, linum: int = 0) -> Proto:
     m = obj_def.search(l)
 
     try:
-        nam =  m.group('name').strip(' "')
+        nam = m.group('name').strip(' "')
         assert nam != "("
 
         ref = parse_symbol_reference(nam)
@@ -132,13 +137,10 @@ def parse_proto(l:str, linum: int = 0) -> Proto:
         if len(gui) != 1:
             raise ValueError(f"Junction at {linum} should have gui: {l}")
 
-
-
     if gui:
         if len(gui) != 1:
             raise ValueError("Prototype is expected to have one coord pair")
         gui = gui[0]
-
 
     return Proto(ref.type, ref.id, inputs, outputs, attrs, gui)
 
@@ -149,20 +151,18 @@ def parse_object_def(l, body) -> Object:
     proto_strs = body['proto']
     # reassemble into lines
     proto_joined = []
-    for i,p in proto_strs:
+    for i, p in proto_strs:
         if p.startswith("//_") or p.startswith(",") or p.startswith("("):
             li, lp = proto_joined[-1]
             lp += "\n" + p
             proto_joined[-1] = (li, lp)
             continue
-        proto_joined.append((i,p))
+        proto_joined.append((i, p))
 
+    # print(proto_joined)
 
-    #print(proto_joined)
-
-
-    prototypes = [parse_proto(x,i) for i,x in proto_joined]
-    net = [parse_transport_def(x) for i,x in body['behavior']]
+    prototypes = [parse_proto(x, i) for i, x in proto_joined]
+    net = [parse_transport_def(x) for i, x in body['behavior']]
     texts = [parse_proto_text(x, i) for i, x in body['text']]
 
     rest = []
@@ -173,8 +173,8 @@ def parse_object_def(l, body) -> Object:
     for x in prototypes:
         if x.type == "Input":
             # reposition input pos to the transport location
-            x.pos.x+=2
-            x.pos.y+=1
+            x.pos.x += 2
+            x.pos.y += 1
 
             h = Header(x.outputs[0].type, x.id, x.pos, x.attrs)
 
@@ -202,8 +202,8 @@ def parse_object_def(l, body) -> Object:
     for s in rest:
         symbols.append(Symbol(s.type, s.id, s.inputs, s.outputs, s.attrs, s.pos))
 
-    o =  Object(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, net, inputs, outputs, junctions)
-    #print(o)
+    o = Object(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, net, inputs, outputs, junctions)
+    # print(o)
     return o
 
 
@@ -228,14 +228,12 @@ def parse_dataset(l) -> Dataset:
     if len(attribs) >= 4:
         com = int(attribs[3])
 
-    return Dataset(name, args, context,color, tree, com)
-
+    return Dataset(name, args, context, color, tree, com)
 
 
 def parse_text(name, detailed=False) -> File:
     with open(name) as f:
         lines = f.readlines()
-
 
     datasets = []
     objects = []
@@ -259,9 +257,9 @@ def parse_text(name, detailed=False) -> File:
             for l in lines[i:]:
                 s = l.strip()
 
-                i+=1
+                i += 1
                 if s.startswith("Object Text;"):
-                    body["text"].append((i,s))
+                    body["text"].append((i, s))
                     continue
 
                 if l.startswith("{"):
@@ -281,7 +279,7 @@ def parse_text(name, detailed=False) -> File:
                 if body_section:
                     clean = l.strip()
                     if clean:
-                        body[body_section].append((i,clean))
+                        body[body_section].append((i, clean))
                 else:
                     head += l
 
@@ -296,13 +294,11 @@ def parse_text(name, detailed=False) -> File:
             else:
                 prototypes.append(parse_proto(head))
 
-
             continue
 
         if l.strip() == '':
-            i+=1
+            i += 1
             continue
-
 
         raise ValueError("Unknown line", l)
     return File(datasets, objects, prototypes)
