@@ -1,7 +1,5 @@
 import re
 from collections import defaultdict
-from typing import Optional, List, Tuple
-from names import *
 from dto import *
 
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
@@ -102,8 +100,8 @@ def parse_transport_def(text) -> Transport:
     # output from something is our input and vise versa
 
     "transport goes INPUT -> OUTPUT"
-    input = parse_net_reference(m.group('left'))
-    output = parse_net_reference(m.group('right'))
+    output = parse_net_reference(m.group('left'))
+    input = parse_net_reference(m.group('right'))
 
     if gui:
         gui.reverse()
@@ -114,10 +112,6 @@ def parse_transport_def(text) -> Transport:
 
 def parse_proto(l:str, linum: int = 0) -> Proto:
     m = obj_def.search(l)
-
-    ## print("\nPROTO " + l)
-
-    names = Names()
 
     try:
         nam =  m.group('name').strip(' "')
@@ -152,8 +146,6 @@ def parse_proto(l:str, linum: int = 0) -> Proto:
 def parse_object_def(l, body) -> Object:
     proto = parse_proto(l)
 
-    names = Names()
-
     proto_strs = body['proto']
     # reassemble into lines
     proto_joined = []
@@ -184,8 +176,7 @@ def parse_object_def(l, body) -> Object:
             x.pos.x+=2
             x.pos.y+=1
 
-            name = names.add_input(x.outputs[0].name, x.id)
-            h = Header(x.outputs[0].type, name, x.pos, x.attrs)
+            h = Header(x.outputs[0].type, x.id, x.pos, x.attrs)
 
             inputs.append(h)
             continue
@@ -194,8 +185,7 @@ def parse_object_def(l, body) -> Object:
             x.pos.x += 2
             x.pos.y += 1
 
-            name = names.add_output(x.inputs[0].name, x.id)
-            h = Header(x.inputs[0].type, name, x.pos, x.attrs)
+            h = Header(x.inputs[0].type, x.id, x.pos, x.attrs)
             outputs.append(h)
             continue
         if x.type == "Junction":
@@ -203,12 +193,16 @@ def parse_object_def(l, body) -> Object:
             x.pos.y += 1
             if x.attrs:
                 raise ValueError("Junctions have attrs!")
+
             junctions.append(Junction(x.inputs[0].type, x.id, x.pos))
             continue
         rest.append(x)
 
+    symbols = []
+    for s in rest:
+        symbols.append(Symbol(s.type, s.id, s.inputs, s.outputs, s.attrs, s.pos))
 
-    o =  Object(proto.type, proto.inputs, proto.outputs, proto.attrs, rest, texts, net, inputs, outputs, junctions)
+    o =  Object(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, net, inputs, outputs, junctions)
     #print(o)
     return o
 

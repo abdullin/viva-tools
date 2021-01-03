@@ -73,6 +73,15 @@ class Proto:
         return SymbolRef(self.type, self.id)
 
 @dataclass
+class Symbol:
+    type: str
+    id: str
+    inputs: List[Pin]
+    outputs: List[Pin]
+    attrs: Dict
+    pos: Pos
+
+@dataclass
 class Transport:
     """Transport connects output of one symbol to an input of another"""
     input: PinRef
@@ -103,7 +112,7 @@ class Object:
     h_inputs: List[Pin]
     h_outputs: List[Pin]
     attrs: Dict
-    behavior: List[Proto]
+    behavior: List[Symbol]
     texts: List[Text]
     net: List[Transport]
     inputs: List[Header]
