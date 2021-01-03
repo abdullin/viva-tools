@@ -74,7 +74,7 @@ def pin_to_edn(x: Pin):
     return (x.name, x.type)
 
 def header_to_edn(x: Header, input: bool):
-    return (kw("input" if input else "output"),x.type, x.name, (x.pos.x, x.pos.y), x.attrs)
+    return (kw("input" if input else "output"),x.name, x.type, (x.pos.x, x.pos.y), x.attrs)
 
 def symbol_to_edn(x: Symbol):
     attrs = {}

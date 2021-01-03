@@ -170,13 +170,24 @@ def parse_object_def(l, body) -> Object:
     outputs = []
     junctions = []
 
+    names = {}
+
+    def add_name(n):
+        for i in range(0, 10000):
+            name = n if i ==0 else f"{n}_i"
+            if name not in names:
+                names[name]=True
+                return name
+
+
     for x in prototypes:
         if x.type == "Input":
             # reposition input pos to the transport location
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(x.outputs[0].type, x.id, x.pos, x.attrs)
+            name = add_name(f'i_{x.outputs[0].name}')
+            h = Header(x.outputs[0].type, name, x.pos, x.attrs)
 
             inputs.append(h)
             continue
@@ -185,7 +196,9 @@ def parse_object_def(l, body) -> Object:
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(x.inputs[0].type, x.id, x.pos, x.attrs)
+
+            name = add_name(f'o_{x.inputs[0].name}')
+            h = Header(x.inputs[0].type, name, x.pos, x.attrs)
             outputs.append(h)
             continue
         if x.type == "Junction":

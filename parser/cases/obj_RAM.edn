@@ -8,15 +8,15 @@
      ("Wait" "Bit")]
     [("O" "Variant") ("Done" "Bit") ("Busy" "Bit")]
     {"TreeGroup" "CoreLib\\\\Memory"})
-  [(:input "Variant" nil (17 19) {})
-   (:input "Variant" "A" (17 26) {})
-   (:input "Bit" "B" (17 46) {})
-   (:input "Bit" "C" (17 50) {})
-   (:input "Bit" "D" (17 54) {})
-   (:input "Bit" "E" (162 62) {})
-   (:output "Variant" nil (166 22) {})
-   (:output "Bit" "A" (166 35) {})
-   (:output "Bit" "B" (18 64) {})
+  [(:input "i_Data" "Variant" (17 19) {})
+   (:input "i_Addr" "Variant" (17 26) {})
+   (:input "i_WE" "Bit" (17 46) {})
+   (:input "i_ClkG" "Bit" (17 50) {})
+   (:input "i_Go" "Bit" (17 54) {})
+   (:input "i_Wait" "Bit" (162 62) {})
+   (:output "o_O" "Variant" (166 22) {})
+   (:output "o_Done" "Bit" (166 35) {})
+   (:output "o_Busy" "Bit" (18 64) {})
    (:symbol "RAMSP" nil [("Data" "Variant") ("Addr" "Variant") ("ClkG" "Bit") ("WE" "Bit")]
             [("Data" "Variant")] (135 19) {})
    (:symbol "RegOnGo" nil [("D" "Variant") ("ClkG" "Bit") ("AClr" "Bit") ("Go" "Bit") ("Wait" "Bit")]
