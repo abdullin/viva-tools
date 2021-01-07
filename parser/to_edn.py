@@ -67,14 +67,18 @@ def to_edn(f: File):
 
     return result
 
-def junction_to_edn(j :Junction):
-    return (kw("junction"), j.type, j.id, (j.pos.x, j.pos.y))
+
+def junction_to_edn(j: Junction):
+    return kw("junction"), j.type, j.id, (j.pos.x, j.pos.y)
+
 
 def pin_to_edn(x: Pin):
-    return (x.name, x.type)
+    return x.name, x.type
+
 
 def header_to_edn(x: Header):
-    return (kw("input" if x.is_input else "output"), x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs)
+    return kw("input" if x.is_input else "output"), x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs
+
 
 def symbol_to_edn(x: Symbol):
     attrs = {}
@@ -83,7 +87,8 @@ def symbol_to_edn(x: Symbol):
 
     inputs = [pin_to_edn(i) for i in x.inputs]
     outputs = [pin_to_edn(i) for i in x.outputs]
-    return (kw("symbol"), x.type, x.id, inputs, outputs, (x.pos.x, x.pos.y), attrs)
+    return kw("symbol"), x.type, x.id, inputs, outputs, (x.pos.x, x.pos.y), attrs
+
 
 def proto_to_edn(x: Proto):
     attrs = {}
@@ -95,16 +100,19 @@ def proto_to_edn(x: Proto):
     inputs = [pin_to_edn(i) for i in x.inputs]
     outputs = [pin_to_edn(i) for i in x.outputs]
     name = SymbolRef(x.type, x.id).to_str()
-    return (kw("proto"), name, inputs, outputs, attrs)
+    return kw("proto"), name, inputs, outputs, attrs
+
 
 def text_to_edn(x: Text):
-    return ((kw("text"), x.text, (x.pos.x, x.pos.y)))
+    return kw("text"), x.text, (x.pos.x, x.pos.y)
+
 
 def net_ref_to_edn(x: PinRef):
-    return (x.type, x.id, x.io_num)
+    return x.type, x.id, x.io_num
+
 
 def net_to_edn(x: Transport):
-    pos = [(x.x,x.y) for x in x.gui]
+    pos = [(x.x, x.y) for x in x.gui]
     left = net_ref_to_edn(x.left)
     right = net_ref_to_edn(x.right)
-    return (kw("net"), left, right, pos)
+    return kw("net"), left, right, pos
