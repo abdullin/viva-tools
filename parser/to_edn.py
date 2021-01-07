@@ -111,8 +111,8 @@ def net_ref_to_edn(x: PinRef):
     return x.symbol_type, x.id, x.io_num
 
 
-def net_to_edn(x: Transport):
+def net_to_edn(x: Conn):
     pos = [(x.x, x.y) for x in x.gui]
-    left = net_ref_to_edn(x.left)
-    right = net_ref_to_edn(x.right)
+    left = (x.left.type, x.left.id, x.left_num)
+    right = (x.right.type, x.right.id, x.right_num)
     return kw("net"), left, right, pos

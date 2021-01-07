@@ -168,6 +168,8 @@ def parse_object_def(l, body) -> Sheet:
     outputs = []
     junctions = []
 
+    lookup = {}
+
     for x in prototypes:
         if x.type == "Input":
             # reposition input pos to the transport location
@@ -177,6 +179,7 @@ def parse_object_def(l, body) -> Sheet:
             h = Header(True, x.outputs[0].data_type, x.id, x.outputs[0].name, x.pos, x.attrs)
 
             inputs.append(h)
+            lookup[f'Input:{x.id or ""}'] = h
             continue
         if x.type == "Output":
             # move pos to the real transport location
@@ -185,6 +188,8 @@ def parse_object_def(l, body) -> Sheet:
 
             h = Header(False, x.inputs[0].data_type, x.id, x.inputs[0].name, x.pos, x.attrs)
             outputs.append(h)
+
+            lookup[f'Output:{x.id or ""}'] = h
             continue
         if x.type == "Junction":
             x.pos.x += 1
@@ -192,16 +197,37 @@ def parse_object_def(l, body) -> Sheet:
             if x.attrs:
                 raise ValueError("Junctions have attrs!")
 
-            junctions.append(Junction(x.inputs[0].data_type, x.id, x.pos))
+            j = Junction(x.inputs[0].data_type, x.id, x.pos)
+            junctions.append(j)
+            lookup[f'Junction:{x.id or ""}'] = j
+
             continue
 
-        symbols.append(Symbol(x.type, x.id, x.inputs, x.outputs, x.attrs, x.pos))
+
+
+        s = Symbol(x.type, x.id, x.inputs, x.outputs, x.attrs, x.pos)
+        symbols.append(s)
+        lookup[f'{x.type}:{x.id or ""}'] = s
 
 
     net = [parse_transport_def(x) for i, x in body['behavior']]
+
+    #print(lookup.keys())
+
+    connections = []
+    for n in net:
+        "Convert references to the model"
+        left = lookup[f'{n.left.symbol_type}:{n.left.id or ""}']
+        right = lookup[f'{n.right.symbol_type}:{n.right.id or ""}']
+
+        c = Conn(left, n.left.io_num, right, n.right.io_num, n.gui)
+        connections.append(c)
+
+
+
     texts = [parse_proto_text(x, i) for i, x in body['text']]
 
-    o = Sheet(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, net, inputs, outputs, junctions)
+    o = Sheet(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, connections, inputs, outputs, junctions)
     # print(o)
     return o
 

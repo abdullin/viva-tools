@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Tuple, Dict, Optional, Any
+from typing import List, Tuple, Dict, Optional, Any, Union
+
 
 @dataclass
 class Pos:
@@ -57,6 +58,13 @@ class Transport:
     left: PinRef
     right: PinRef
     gui: List[Pos]
+@dataclass
+class Conn:
+    left: Union['Header','Symbol','Junction']
+    left_num: int
+    right: Union['Header', 'Symbol', 'Junction']
+    right_num: int
+    gui: List[Pos]
 
 @dataclass
 class Header:
@@ -89,7 +97,7 @@ class Sheet:
     attrs: Dict
     behavior: List[Symbol]
     texts: List[Text]
-    net: List[Transport]
+    net: List[Conn]
     inputs: List[Header]
     outputs: List[Header]
     junctions: List[Junction]
