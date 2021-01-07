@@ -19,7 +19,12 @@ class Grid:
         if r.type == "Junction":
             return self.junctions[r.id]
 
-        return self.outputs[f"{r.type}:{r.id if r.id else ''}-{r.io_num}"]
+        key = f"{r.type}:{r.id if r.id else ''}-{r.io_num}"
+        value = self.outputs.get(key)
+        if value:
+            return value
+
+        raise KeyError(f"Can't find key '{key}'. Matches are: {[x for x in self.outputs.keys() if r.type in x]}")
 
 
     def locate_input(self, r: PinRef):
@@ -28,11 +33,11 @@ class Grid:
 
         return self.inputs[f"{r.type}:{r.id if r.id else ''}-{r.io_num}"]
 
-    def add_output(self, r: SymbolRef, num: int, pos):
+    def add_output(self, r: Symbol, num: int, pos):
         s = f"{r.type}:{r.id if r.id else ''}-{num}"
         self.outputs[s] = pos
 
-    def add_input(self, r:SymbolRef, num: int, pos):
+    def add_input(self, r:Symbol, num: int, pos):
         s = f"{r.type}:{r.id if r.id else ''}-{num}"
         self.inputs[s] = pos
 

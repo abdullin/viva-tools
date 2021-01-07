@@ -11,8 +11,8 @@ from gi.repository import Pango as pango, PangoCairo as pc
 from parse import parse_text
 from dto import *
 
-data = parse_text("cases/dexter_main.ipg")
-
+#data = parse_text("cases/dexter_main.ipg")
+data = parse_text("cases/obj_RAM.ipg")
 obj = data.objects[0]
 
 default_font = pango.font_description_from_string("Arial 8")
@@ -86,7 +86,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         x, y = b.pos.x * 5, b.pos.y * 5
         # sheet input is output on the grid
         ref = SymbolRef("Input", b.id)
-        grid.add_output(ref, 0, (x, y))
+        grid.add_output(b, 0, (x, y))
 
         ctx.set_line_width(1)
         ctx.set_source_rgb(1, 0, 0)
@@ -205,7 +205,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.move_to(io_x + 10, io_y + 4)
             print_text(ctx, i.name, fd=pin_font)
 
-            grid.add_input(b.get_ref(), i.num, (io_x + 7, io_y + 4))
+            grid.add_input(b, i.num, (io_x + 7, io_y + 4))
 
             io_y += pad_space
 
@@ -229,7 +229,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
             ctx.set_source_rgb(0, 0, 1)
 
-            grid.add_output(b.get_ref(), o.num, (io_x, io_y + 4))
+            grid.add_output(b, o.num, (io_x, io_y + 4))
             ctx.fill()
 
             ctx.move_to(io_x - 2, io_y + 4)

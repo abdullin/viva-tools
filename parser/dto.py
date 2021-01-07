@@ -56,8 +56,6 @@ class SymbolRef:
     def __hash__(self):
         return hash((self.type, self.id))
 
-    def to_pin_ref(self, io_num: int, kind: PinType) -> PinRef:
-        return PinRef(self.type, self.id, io_num, kind)
 
 
 @dataclass
@@ -90,11 +88,15 @@ class Transport:
 
 @dataclass
 class Header:
+    is_input: bool
     type: str
     id: str
     name: str
     pos: Pos
     attrs: Dict
+
+
+
 
 @dataclass
 class Junction:

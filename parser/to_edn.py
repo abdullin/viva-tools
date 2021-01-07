@@ -54,8 +54,8 @@ def to_edn(f: File):
 
     for x in f.objects:
         bs = [symbol_to_edn(x) for x in x.behavior]
-        inputs = [header_to_edn(x, True) for x in x.inputs]
-        outputs = [header_to_edn(x, False) for x in x.outputs]
+        inputs = [header_to_edn(x) for x in x.inputs]
+        outputs = [header_to_edn(x) for x in x.outputs]
         ns = [net_to_edn(x) for x in x.net]
         texts = [text_to_edn(x) for x in x.texts]
         js = [junction_to_edn(x) for x in x.junctions]
@@ -73,8 +73,8 @@ def junction_to_edn(j :Junction):
 def pin_to_edn(x: Pin):
     return (x.name, x.type)
 
-def header_to_edn(x: Header, input: bool):
-    return (kw("input" if input else "output"), x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs)
+def header_to_edn(x: Header):
+    return (kw("input" if x.is_input else "output"), x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs)
 
 def symbol_to_edn(x: Symbol):
     attrs = {}

@@ -176,7 +176,7 @@ def parse_object_def(l, body) -> Object:
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(x.outputs[0].type, x.id, x.outputs[0].name, x.pos, x.attrs)
+            h = Header(True, x.outputs[0].type, x.id, x.outputs[0].name, x.pos, x.attrs)
 
             inputs.append(h)
             continue
@@ -185,7 +185,8 @@ def parse_object_def(l, body) -> Object:
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(x.inputs[0].type, x.id, x.inputs[0].name, x.pos, x.attrs)
+
+            h = Header(False, x.inputs[0].type, x.id, x.inputs[0].name, x.pos, x.attrs)
             outputs.append(h)
             continue
         if x.type == "Junction":
