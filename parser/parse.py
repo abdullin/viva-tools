@@ -165,7 +165,7 @@ def parse_object_def(l, body) -> Object:
     net = [parse_transport_def(x) for i, x in body['behavior']]
     texts = [parse_proto_text(x, i) for i, x in body['text']]
 
-    rest = []
+    symbols = []
     inputs = []
     outputs = []
     junctions = []
@@ -196,11 +196,8 @@ def parse_object_def(l, body) -> Object:
 
             junctions.append(Junction(x.inputs[0].type, x.id, x.pos))
             continue
-        rest.append(x)
 
-    symbols = []
-    for s in rest:
-        symbols.append(Symbol(s.type, s.id, s.inputs, s.outputs, s.attrs, s.pos))
+        symbols.append(Symbol(x.type, x.id, x.inputs, x.outputs, x.attrs, x.pos))
 
     o = Object(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, net, inputs, outputs, junctions)
     # print(o)
