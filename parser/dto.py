@@ -91,6 +91,7 @@ class Transport:
 @dataclass
 class Header:
     type: str
+    id: str
     name: str
     pos: Pos
     attrs: Dict
