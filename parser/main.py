@@ -14,21 +14,13 @@ def sep():
 
 @click.command()
 @click.option("--create-missing", is_flag=True)
-@click.option("--format", type=str, default="edn")
 @click.option("--detailed", is_flag=True)
 @click.option("--max-diffs", default=1000)
 @click.option("--filter", type=str, default=None)
 @click.option("--canary", is_flag=True, default=False)
-def main(create_missing, format, detailed, max_diffs=1000, filter=None, canary=False):
+def main(create_missing, detailed, max_diffs=1000, filter=None, canary=False):
 
-    if format == "edn":
-        import to_edn as target
-        target_ext = ".edn"
-    elif format == "json":
-        import to_json as target
-        target_ext = ".json"
-    else:
-        raise ValueError("unexpected format " + format)
+    import to_edn as target
 
 
     root = "cases"
@@ -49,7 +41,7 @@ def main(create_missing, format, detailed, max_diffs=1000, filter=None, canary=F
 
             if ext not in [".ipg", ".idl", ".sd"]:
                 continue
-            output = base +target_ext
+            output = base + ".edn"
             print(output)
             data = parse_text(input, detailed)
 
