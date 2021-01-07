@@ -73,7 +73,7 @@ def junction_to_edn(j: Junction):
 
 
 def pin_to_edn(x: Pin):
-    return x.name, x.type
+    return x.name, x.data_type
 
 
 def header_to_edn(x: Header):
@@ -108,7 +108,7 @@ def text_to_edn(x: Text):
 
 
 def net_ref_to_edn(x: PinRef):
-    return x.type, x.id, x.io_num
+    return x.symbol_type, x.id, x.io_num
 
 
 def net_to_edn(x: Transport):

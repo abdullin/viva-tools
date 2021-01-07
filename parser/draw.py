@@ -13,10 +13,10 @@ class Grid:
         self.junctions[j.id] = pos
 
     def locate_output(self, r: PinRef):
-        if r.type == "Junction":
+        if r.symbol_type == "Junction":
             return self.junctions[r.id]
 
-        key = f"{r.type}:{r.id if r.id else ''}-{r.io_num}"
+        key = f"{r.symbol_type}:{r.id if r.id else ''}-{r.io_num}"
         value = self.outputs.get(key)
         if value:
             return value
@@ -28,10 +28,10 @@ class Grid:
 
 
     def locate_input(self, r: PinRef):
-        if r.type == "Junction":
+        if r.symbol_type == "Junction":
             return self.junctions[r.id]
 
-        return self.inputs[f"{r.type}:{r.id if r.id else ''}-{r.io_num}"]
+        return self.inputs[f"{r.symbol_type}:{r.id if r.id else ''}-{r.io_num}"]
 
     def add_output(self, r: Symbol, num: int, pos):
         s = f"{r.type}:{r.id if r.id else ''}-{num}"

@@ -9,25 +9,25 @@ class Pos:
 @dataclass
 class Pin:
     """describes symbol pin: symbol type and pin name"""
-    type: str
+    data_type: str
     name: str
     num: int
 
 @dataclass
 class PinRef:
     """Identifies a pin on the specific symbol instance"""
-    type: str # object type,
+    symbol_type: str # object type,
     id: str # object ID (scoped by the type)
     io_num: int # input/output pin number
 
 @dataclass
 class SymbolRef:
-    """uniquely identifies symbol reference: symbol type and id"""
-    type: str
+    """uniquely identifies symbol reference in a sheet: symbol type and id"""
+    symbol_type: str
     id: str
 
     def to_str(self)-> str:
-        out = self.type
+        out = self.symbol_type
         if self.id:
             out += ":" + self.id
         return out
@@ -60,6 +60,9 @@ class Transport:
 
 @dataclass
 class Header:
+    """
+       type: the data type of this pin
+    """
     is_input: bool
     type: str
     id: str

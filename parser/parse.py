@@ -133,7 +133,7 @@ def parse_proto(l: str, linum: int = 0) -> Proto:
         print(f"Problem parsing proto @{linum}: <{l}>")
         raise
 
-    if ref.type == "Junction":
+    if ref.symbol_type == "Junction":
         if len(gui) != 1:
             raise ValueError(f"Junction at {linum} should have gui: {l}")
 
@@ -142,7 +142,7 @@ def parse_proto(l: str, linum: int = 0) -> Proto:
             raise ValueError("Prototype is expected to have one coord pair")
         gui = gui[0]
 
-    return Proto(ref.type, ref.id, inputs, outputs, attrs, gui)
+    return Proto(ref.symbol_type, ref.id, inputs, outputs, attrs, gui)
 
 
 def parse_object_def(l, body) -> Sheet:
@@ -174,7 +174,7 @@ def parse_object_def(l, body) -> Sheet:
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(True, x.outputs[0].type, x.id, x.outputs[0].name, x.pos, x.attrs)
+            h = Header(True, x.outputs[0].data_type, x.id, x.outputs[0].name, x.pos, x.attrs)
 
             inputs.append(h)
             continue
@@ -183,7 +183,7 @@ def parse_object_def(l, body) -> Sheet:
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(False, x.inputs[0].type, x.id, x.inputs[0].name, x.pos, x.attrs)
+            h = Header(False, x.inputs[0].data_type, x.id, x.inputs[0].name, x.pos, x.attrs)
             outputs.append(h)
             continue
         if x.type == "Junction":
@@ -192,7 +192,7 @@ def parse_object_def(l, body) -> Sheet:
             if x.attrs:
                 raise ValueError("Junctions have attrs!")
 
-            junctions.append(Junction(x.inputs[0].type, x.id, x.pos))
+            junctions.append(Junction(x.inputs[0].data_type, x.id, x.pos))
             continue
 
         symbols.append(Symbol(x.type, x.id, x.inputs, x.outputs, x.attrs, x.pos))
