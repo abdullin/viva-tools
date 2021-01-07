@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import List, Tuple, Dict, Optional, Any
-from enum import Enum
 
 @dataclass
 class Pos:
@@ -13,12 +12,6 @@ class Pin:
     type: str
     name: str
     num: int
-
-
-class PinType(Enum):
-    IN = 1
-    OUT = 2
-    ANY = 9
 
 @dataclass
 class PinRef:
