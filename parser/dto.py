@@ -86,7 +86,7 @@ class Text:
     pos: Pos
 
 @dataclass
-class Object:
+class Sheet:
     name: str
     h_inputs: List[Pin]
     h_outputs: List[Pin]
@@ -110,7 +110,7 @@ class Dataset:
 @dataclass
 class File:
     datasets: List[Dataset]
-    objects: List[Object]
+    objects: List[Sheet]
     prototypes: List[Proto]
 
 @dataclass

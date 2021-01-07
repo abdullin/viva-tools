@@ -145,7 +145,7 @@ def parse_proto(l: str, linum: int = 0) -> Proto:
     return Proto(ref.type, ref.id, inputs, outputs, attrs, gui)
 
 
-def parse_object_def(l, body) -> Object:
+def parse_object_def(l, body) -> Sheet:
     proto = parse_proto(l)
 
     proto_strs = body['proto']
@@ -162,8 +162,6 @@ def parse_object_def(l, body) -> Object:
     # print(proto_joined)
 
     prototypes = [parse_proto(x, i) for i, x in proto_joined]
-    net = [parse_transport_def(x) for i, x in body['behavior']]
-    texts = [parse_proto_text(x, i) for i, x in body['text']]
 
     symbols = []
     inputs = []
@@ -199,7 +197,11 @@ def parse_object_def(l, body) -> Object:
 
         symbols.append(Symbol(x.type, x.id, x.inputs, x.outputs, x.attrs, x.pos))
 
-    o = Object(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, net, inputs, outputs, junctions)
+
+    net = [parse_transport_def(x) for i, x in body['behavior']]
+    texts = [parse_proto_text(x, i) for i, x in body['text']]
+
+    o = Sheet(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, net, inputs, outputs, junctions)
     # print(o)
     return o
 
