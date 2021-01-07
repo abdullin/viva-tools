@@ -69,7 +69,7 @@ def to_edn(f: File):
 
 
 def junction_to_edn(j: Junction):
-    return kw("junction"), j.type, j.id, (j.pos.x, j.pos.y)
+    return kw("junction"), j.data_type, j.id, (j.pos.x, j.pos.y)
 
 
 def pin_to_edn(x: Pin):
@@ -77,7 +77,7 @@ def pin_to_edn(x: Pin):
 
 
 def header_to_edn(x: Header):
-    return kw("input" if x.is_input else "output"), x.name, x.type, x.id, (x.pos.x, x.pos.y), x.attrs
+    return kw("input" if x.is_input else "output"), x.name, x.data_type, x.id, (x.pos.x, x.pos.y), x.attrs
 
 
 def symbol_to_edn(x: Symbol):
@@ -107,12 +107,17 @@ def text_to_edn(x: Text):
     return kw("text"), x.text, (x.pos.x, x.pos.y)
 
 
-def net_ref_to_edn(x: PinRef):
-    return x.symbol_type, x.id, x.io_num
+def net_ref_to_edn(x):
+    if type(x) == Header:
+        return "Input" if x.is_input else "Output"
+    if type(x) == Junction:
+        return "Junction"
+    return x.type
 
 
 def net_to_edn(x: Conn):
     pos = [(x.x, x.y) for x in x.gui]
-    left = (x.left.type, x.left.id, x.left_num)
-    right = (x.right.type, x.right.id, x.right_num)
+
+    left = (net_ref_to_edn(x.left), x.left.id, x.left_num)
+    right = (net_ref_to_edn(x.right), x.right.id, x.right_num)
     return kw("net"), left, right, pos

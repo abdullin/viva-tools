@@ -72,7 +72,7 @@ class Header:
        type: the data type of this pin
     """
     is_input: bool
-    type: str
+    data_type: str
     id: str
     name: str
     pos: Pos
@@ -80,7 +80,7 @@ class Header:
 
 @dataclass
 class Junction:
-    type: str
+    data_type: str
     id: str
     pos: Pos
 

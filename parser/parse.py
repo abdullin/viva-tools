@@ -51,7 +51,7 @@ def extract_attributes(text: str):
     return attrs
 
 
-net = re.compile("(?P<left>.+)( = )(?P<right>.+);(\s*//_(?P<attributes>.*))?")
+net = re.compile("(?P<left>.+)\.(?P<left_num>\d+)( = )(?P<right>.+)\.(?P<right_num>\d+);(\s*//_(?P<attributes>.*))?")
 
 
 def extract_attr_gui(text) -> List[Pos]:
@@ -83,18 +83,14 @@ def parse_symbol_reference(text: str) -> SymbolRef:
     return SymbolRef(s[0], id)
 
 
-def parse_net_reference(text: str) -> PinRef:
-    io_num = 0
+def parse_net_reference(text: str, num: str) -> PinRef:
+    io_num = int(num)
     id = None
     text = text.strip('"')
-    s1 = text.split('.')
-    if len(s1) == 2:
-        io_num = int(s1[1])
-    s1[0] = s1[0].strip('"')
-    s2 = s1[0].split(':')
-    if len(s2) == 2:
-        id = s2[1]
-    type = s2[0]
+    split = text.split(':')
+    if len(split) == 2:
+        id = split[1]
+    type = split[0]
     return PinRef(type, id, io_num)
 
 
@@ -106,8 +102,8 @@ def parse_transport_def(text) -> Transport:
     # output from something is our input and vise versa
 
     "transport goes INPUT -> OUTPUT"
-    output = parse_net_reference(m.group('left'))
-    input = parse_net_reference(m.group('right'))
+    output = parse_net_reference(m.group('left'), m.group('left_num'))
+    input = parse_net_reference(m.group('right'), m.group('right_num'))
 
     if gui:
         gui.reverse()
