@@ -7,8 +7,6 @@ class Pos:
     x: int
     y: int
 
-
-
 @dataclass
 class Pin:
     """describes symbol pin: symbol type and pin name"""
@@ -29,18 +27,6 @@ class PinRef:
     id: str # object ID (scoped by the type)
     io_num: int # input/output pin number
 
-    def to_str(self) -> str:
-
-        out = self.type
-        if self.id:
-            out += ":" + self.id
-        return out + "." + str(self.io_num)
-
-    def __hash__(self):
-        return hash((self.type, self.id, self.io_num))
-
-    def __eq__(self, other: 'PinRef'):
-        return self.id == other.id and self.type == other.type and self.io_num == other.io_num
 @dataclass
 class SymbolRef:
     """uniquely identifies symbol reference: symbol type and id"""
@@ -53,10 +39,6 @@ class SymbolRef:
             out += ":" + self.id
         return out
 
-    def __hash__(self):
-        return hash((self.type, self.id))
-
-
 
 @dataclass
 class Proto:
@@ -66,9 +48,6 @@ class Proto:
     outputs: List[Pin]
     attrs: Dict
     pos: Optional[Pos]
-
-    def get_ref(self) -> SymbolRef:
-        return SymbolRef(self.type, self.id)
 
 @dataclass
 class Symbol:
@@ -94,9 +73,6 @@ class Header:
     name: str
     pos: Pos
     attrs: Dict
-
-
-
 
 @dataclass
 class Junction:

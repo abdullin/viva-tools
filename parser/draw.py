@@ -1,8 +1,5 @@
 from dto import *
 
-def input(ctx, x, y):
-    pass
-
 class Grid:
     """
     Grid of pins and junctions. It is used to store and lookup positions

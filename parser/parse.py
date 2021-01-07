@@ -185,7 +185,6 @@ def parse_object_def(l, body) -> Object:
             x.pos.x += 2
             x.pos.y += 1
 
-
             h = Header(False, x.inputs[0].type, x.id, x.inputs[0].name, x.pos, x.attrs)
             outputs.append(h)
             continue

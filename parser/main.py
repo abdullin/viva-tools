@@ -2,7 +2,7 @@
 from collections import defaultdict
 
 import click
-import edn_format
+import to_edn as target
 import os
 import deepdiff as dd
 
@@ -19,9 +19,6 @@ def sep():
 @click.option("--filter", type=str, default=None)
 @click.option("--canary", is_flag=True, default=False)
 def main(create_missing, detailed, max_diffs=1000, filter=None, canary=False):
-
-    import to_edn as target
-
 
     root = "cases"
     for path, subdirs, files in os.walk(root):
@@ -65,9 +62,6 @@ def main(create_missing, detailed, max_diffs=1000, filter=None, canary=False):
                     if detailed:
                         print("Expect: " + a.expected_str)
                         print("Actual: " + a.actual_str)
-
-
-
 
 if __name__ == "__main__":
     main()
