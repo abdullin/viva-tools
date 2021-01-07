@@ -82,8 +82,8 @@ class Symbol:
 @dataclass
 class Transport:
     """Transport connects output of one symbol to an input of another"""
-    input: PinRef
-    output: PinRef
+    left: PinRef
+    right: PinRef
     gui: List[Pos]
 
 @dataclass

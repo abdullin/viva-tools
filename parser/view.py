@@ -58,9 +58,14 @@ def draw_net(ctx, points):
 
 max_x, max_y = 0,0
 
-for x in obj.behavior:
+for x in obj.behavior + obj.inputs + obj.outputs:
     max_x = max(max_x, x.pos.x)
     max_y = max(max_y, x.pos.y)
+
+
+
+max_x += 20
+max_y += 20
 
 print(max_x, max_y)
 
@@ -85,8 +90,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     for b in obj.inputs:
         x, y = b.pos.x * 5, b.pos.y * 5
         # sheet input is output on the grid
-        ref = SymbolRef("Input", b.id)
-        grid.add_output(b, 0, (x, y))
+        grid.add_io(b, (x, y))
 
         ctx.set_line_width(1)
         ctx.set_source_rgb(1, 0, 0)
@@ -105,9 +109,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     for b in obj.outputs:
         x, y = b.pos.x * 5, b.pos.y * 5
 
-        ref = SymbolRef("Output", b.id)
-
-        grid.add_input(ref, 0, (x, y ))
+        grid.add_io(b, (x, y ))
 
 
         ctx.set_line_width(1)
@@ -240,22 +242,22 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     for n in obj.net:
         points = []
 
-        net_start = grid.locate_output(n.output)
+        net_start = grid.locate_output(n.left)
         if net_start:
             points.append(net_start)
         else:
-            print(f"No input pin '{n.input}' for net")
+            print(f"No output pin '{n.left}' for net")
 
         for p in n.gui:
             points.append((p.x * 5, p.y * 5))
 
-        net_end = grid.locate_input(n.input)
+        net_end = grid.locate_input(n.right)
 
 
         if net_end:
             points.append(net_end)
         else:
-            print(f"No output pin '{n.output}' for net")
+            print(f"No input pin '{n.right}' for net")
 
         draw_net(ctx, points)
 
