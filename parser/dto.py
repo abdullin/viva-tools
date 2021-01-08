@@ -8,7 +8,6 @@ class Pin:
     """describes symbol pin: symbol type and pin name"""
     data_type: str
     name: str
-    num: int
 
 @dataclass
 class PinRef:
@@ -22,13 +21,6 @@ class SymbolRef:
     """uniquely identifies symbol reference in a sheet: symbol type and id"""
     symbol_type: str
     id: str
-
-    def to_str(self)-> str:
-        out = self.symbol_type
-        if self.id:
-            out += ":" + self.id
-        return out
-
 
 @dataclass
 class Proto:
@@ -46,9 +38,6 @@ class Transport:
     left: PinRef
     right: PinRef
     gui: List[Pos]
-
-
-
 
 @dataclass
 class Assertion:

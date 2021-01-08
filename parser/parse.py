@@ -19,7 +19,7 @@ def extract_pins(line: str) -> List[Pin]:
     result = []
 
     pairs = clean.split(",")
-    for i, p in enumerate(pairs):
+    for p in pairs:
 
         match = pair_split.search(p)
         if not match:
@@ -27,7 +27,7 @@ def extract_pins(line: str) -> List[Pin]:
         type = match.group('type').strip("\" ")
         name = match.group('name').strip("\" ")
 
-        p = Pin(type, name, i)
+        p = Pin(type, name)
         result.append(p)
     return result
 

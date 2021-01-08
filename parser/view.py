@@ -222,7 +222,6 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             io_y+=5
 
         for j, o in enumerate(outputs):
-
             # push Done & Wait to the very botton
             if o.name == "Done":
 
@@ -242,6 +241,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             print_text(ctx, o.name, right=True, fd=pin_font)
 
             io_y += pad_space
+
 
     for n in obj.net:
         points = []
