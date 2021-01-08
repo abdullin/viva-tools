@@ -57,7 +57,7 @@ def draw_net(ctx, points):
 
 max_x, max_y = 0,0
 
-for x in obj.behavior + obj.inputs + obj.outputs:
+for x in obj.symbols:
     max_x = max(max_x, x.pos.x)
     max_y = max(max_y, x.pos.y)
 
@@ -72,10 +72,9 @@ print(max_x, max_y)
 with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     ctx = cairo.Context(surface)
 
-    grid = draw.Grid()
 
     ctx.move_to(10, 10)
-    print_text(ctx, obj.name, fd=header_font)
+    print_text(ctx, obj.type, fd=header_font)
 
     for b in obj.texts:
         ctx.move_to(b.pos.x * 5, b.pos.y * 5)
@@ -86,69 +85,74 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         lay.set_text(b.text)
         pc.show_layout(ctx, lay)
 
-    for b in obj.inputs:
+    grid = {}
+
+    for b in obj.symbols:
         x, y = b.pos.x * 5, b.pos.y * 5
         # sheet input is output on the grid
-        grid.add_io(b, (x, y))
 
-        ctx.set_line_width(1)
-        ctx.set_source_rgb(1, 0, 0)
-        ctx.move_to(x, y)
+        if b.type == "Input":
+            grid[b.pins[0]] = (x, y)
 
-        ctx.rel_line_to(-4, 4)
-        ctx.rel_line_to(-5, 0)
-        ctx.rel_line_to(0, -8)
-        ctx.rel_line_to(5, 0)
-        ctx.close_path()
-        ctx.stroke()
+            ctx.set_line_width(1)
+            ctx.set_source_rgb(1, 0, 0)
+            ctx.move_to(x, y)
 
-        ctx.move_to(x - 12, y)
-        print_text(ctx, b.name, right=True)
+            ctx.rel_line_to(-4, 4)
+            ctx.rel_line_to(-5, 0)
+            ctx.rel_line_to(0, -8)
+            ctx.rel_line_to(5, 0)
+            ctx.close_path()
+            ctx.stroke()
 
-    for b in obj.outputs:
-        x, y = b.pos.x * 5, b.pos.y * 5
+            ctx.move_to(x - 12, y)
+            print_text(ctx, b.pins[0].name, right=True)
+            continue
+        if b.type == "Output":
+            grid[b.pins[0]] = (x, y)
 
-        grid.add_io(b, (x, y ))
+            ctx.set_line_width(1)
+            ctx.set_source_rgb(1, 0, 0)
+            ctx.move_to(x, y)
+            ctx.rel_line_to(4, -4)
+            ctx.rel_line_to(5, 0)
+            ctx.rel_line_to(0, 8)
+            ctx.rel_line_to(-5, 0)
+            ctx.rel_line_to(-4, -4)
+            ctx.close_path()
+            ctx.stroke()
 
+            ctx.move_to(x + 12, y)
+            print_text(ctx, b.pins[0].name)
+            continue
 
-        ctx.set_line_width(1)
-        ctx.set_source_rgb(1, 0, 0)
-        ctx.move_to(x, y)
-        ctx.rel_line_to(4, -4)
-        ctx.rel_line_to(5, 0)
-        ctx.rel_line_to(0, 8)
-        ctx.rel_line_to(-5, 0)
-        ctx.rel_line_to(-4, -4)
-        ctx.close_path()
-        ctx.stroke()
+        if b.type == "Junction":
+            ctx.arc(x, y, 2, 0, math.pi * 2)
+            ctx.fill()
 
-        ctx.move_to(x + 12, y)
-        print_text(ctx, b.name)
-    for b in obj.junctions:
-        x, y = b.pos.x * 5, b.pos.y * 5
-        grid.add_junction(b, (x, y))
-        ctx.arc(x, y, 2, 0, math.pi * 2)
-        ctx.fill()
-
-    for b in obj.behavior:
-        x, y = b.pos.x * 5, b.pos.y * 5
+            for p in b.pins:
+                grid[p] = (x, y)
+            continue
 
         if b.type == "ListIn":
-            o1, o2 = b.outputs
-            b.outputs = [o2, o1]
+            i1, o1, o2 = b.pins
+            b.pins = [i1, o2, i1]
 
         if b.type == "ListOut":
-            o1, o2 = b.inputs
-            b.inputs = [o2,o1]
-
-
+            i1, i2, o1 = b.pins
+            b.pins = [i2, i1, o1]
 
         ctx.move_to(x + 6, y)
         tw, th = print_text(ctx, b.type.strip('"'), fd=behavior_label)
 
         ctx.set_source_rgb(0, 0, 1)
         ctx.set_line_width(1)
-        ios = max(len(b.inputs), len(b.outputs))
+
+        outputs = [p for p in b.pins if not p.is_input]
+        inputs = [p for p in b.pins if p.is_input]
+        ios = max(len(inputs), len(outputs))
+
+
         height = 15 * ios
 
         if ios == 1:
@@ -156,13 +160,13 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
 
         left_w = [0] * ios
-        for i,w in enumerate(b.inputs):
+        for i,w in enumerate(inputs):
             txt = make_text(ctx, w.name, fd=pin_font)
             dw, dh = txt.get_pixel_size()
             left_w[i] = dw
 
         right_w = [0] * ios
-        for i,w in enumerate(b.outputs):
+        for i,w in enumerate(outputs):
             txt = make_text(ctx, w.name, fd=pin_font)
             dw, dh = txt.get_pixel_size()
             right_w[i] = dw
@@ -190,13 +194,13 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         io_y = y + pad_start_y
 
 
-        if len(b.inputs)==1:
+        if len(inputs)==1:
             io_y+=5
-        for j, i in enumerate(b.inputs):
+        for j, i in enumerate(inputs):
             # push Done & Wait to the very botton
             if i.name == "Go":
 
-                delta = len(b.outputs) - len(b.inputs)
+                delta = len(outputs) - len(inputs)
                 if delta > 0:
                     io_y += pad_space * delta
 
@@ -206,7 +210,7 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
             ctx.move_to(io_x + 10, io_y + 4)
             print_text(ctx, i.name, fd=pin_font)
 
-            grid.add_input(b, i.num, (io_x + 7, io_y + 4))
+            grid[i] = (io_x + 7, io_y + 4)
 
             io_y += pad_space
 
@@ -214,15 +218,15 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
         io_y = y + pad_start_y
 
 
-        if len(b.outputs)==1:
+        if len(outputs)==1:
             io_y+=5
 
-        for j, o in enumerate(b.outputs):
+        for j, o in enumerate(outputs):
 
             # push Done & Wait to the very botton
             if o.name == "Done":
 
-                delta = len(b.inputs) - len(b.outputs)
+                delta = len(inputs) - len(outputs)
                 if delta > 0:
                     io_y += pad_space * delta
 
@@ -230,7 +234,8 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
 
             ctx.set_source_rgb(0, 0, 1)
 
-            grid.add_output(b, o.num, (io_x, io_y + 4))
+            grid[o] = (io_x, io_y + 4)
+
             ctx.fill()
 
             ctx.move_to(io_x - 2, io_y + 4)
@@ -241,16 +246,16 @@ with cairo.SVGSurface("example.svg", max_x * 5, max_y * 5) as surface:
     for n in obj.net:
         points = []
 
-        net_start = grid.locate_output(n.left)
+        net_start = grid[n.left]
         if net_start:
             points.append(net_start)
         else:
             print(f"No output pin '{n.left}' for net")
 
-        for p in n.gui:
+        for p in n.pos:
             points.append((p.x * 5, p.y * 5))
 
-        net_end = grid.locate_input(n.right)
+        net_end = grid[n.right]
 
 
         if net_end:

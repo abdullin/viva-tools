@@ -6,7 +6,7 @@ class Pos:
     x: int
     y: int
 
-@dataclass
+@dataclass(eq=False)
 class Pin:
     is_input: bool
     data_type: str
