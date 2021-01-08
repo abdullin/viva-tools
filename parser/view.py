@@ -2,7 +2,6 @@ import math
 
 import cairo
 import gi
-import draw
 
 gi.require_version('PangoCairo', '1.0')
 gi.require_version('Pango', '1.0')
@@ -13,7 +12,7 @@ from dto import *
 
 #data = parse_text("cases/dexter_main.ipg")
 data = parse_text("cases/obj_RAM.ipg")
-obj = data.objects[0]
+obj = data.sheets[0]
 
 default_font = pango.font_description_from_string("Arial 8")
 header_font = pango.font_description_from_string("Arial 14")

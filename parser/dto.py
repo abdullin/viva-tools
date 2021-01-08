@@ -1,11 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Tuple, Dict, Optional, Any, Union
 
-
-@dataclass
-class Pos:
-    x: int
-    y: int
+from model import *
 
 @dataclass
 class Pin:
@@ -43,14 +39,6 @@ class Proto:
     attrs: Dict
     pos: Optional[Pos]
 
-@dataclass
-class Symbol:
-    type: str
-    id: str
-    inputs: List[Pin]
-    outputs: List[Pin]
-    attrs: Dict
-    pos: Pos
 
 @dataclass
 class Transport:
@@ -58,64 +46,9 @@ class Transport:
     left: PinRef
     right: PinRef
     gui: List[Pos]
-@dataclass
-class Conn:
-    left: Union['Header','Symbol','Junction']
-    left_num: int
-    right: Union['Header', 'Symbol', 'Junction']
-    right_num: int
-    gui: List[Pos]
 
-@dataclass
-class Header:
-    """
-       type: the data type of this pin
-    """
-    is_input: bool
-    data_type: str
-    id: str
-    name: str
-    pos: Pos
-    attrs: Dict
 
-@dataclass
-class Junction:
-    data_type: str
-    id: str
-    pos: Pos
 
-@dataclass
-class Text:
-    text: str
-    pos: Pos
-
-@dataclass
-class Sheet:
-    name: str
-    h_inputs: List[Pin]
-    h_outputs: List[Pin]
-    attrs: Dict
-    behavior: List[Symbol]
-    texts: List[Text]
-    net: List[Conn]
-    inputs: List[Header]
-    outputs: List[Header]
-    junctions: List[Junction]
-
-@dataclass
-class Dataset:
-    name: str
-    args: List[str]
-    context: int
-    color: int
-    tree: List[str]
-    com: Optional[int]
-
-@dataclass
-class File:
-    datasets: List[Dataset]
-    objects: List[Sheet]
-    prototypes: List[Proto]
 
 @dataclass
 class Assertion:

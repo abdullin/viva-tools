@@ -2,7 +2,8 @@ from collections import OrderedDict
 
 import edn_format
 
-from dto import *
+from model import *
+import dto as dto
 
 kw = edn_format.Keyword
 
@@ -15,7 +16,7 @@ def write_file(output, f: File):
             out.write("\n")
 
 
-def compare_file(output: str, f: File) -> List[Assertion]:
+def compare_file(output: str, f: File) -> List[dto.Assertion]:
     with open(output) as out:
         out_text = out.read()
         loaded_edn = edn_format.loads_all(out_text)
@@ -26,7 +27,7 @@ def compare_file(output: str, f: File) -> List[Assertion]:
     for (l, p) in zip(loaded_edn, parsed_edn):
         parsed_typed = edn_format.loads(edn_format.dumps(p))
 
-        results.append(Assertion(
+        results.append(dto.Assertion(
             l,
             parsed_typed,
             edn_format.dumps(l),
@@ -50,74 +51,82 @@ def to_edn(f: File):
         result.append((kw("DataSet"), x.name, x.args, attrs))
 
     for x in f.prototypes:
-        result.append(proto_to_edn(x))
+        result.append(prototype_to_edn(x))
 
-    for x in f.objects:
-        bs = [symbol_to_edn(x) for x in x.behavior]
-        inputs = [header_to_edn(x) for x in x.inputs]
-        outputs = [header_to_edn(x) for x in x.outputs]
-        ns = [net_to_edn(x) for x in x.net]
+    for x in f.sheets:
+        mapper = {}
+
+        # let's give unique IDs to all symbols
+
+        for i in x.symbols:
+            mapper[i] = len(mapper)
+
+        ss = [symbol_to_edn(mapper, x) for x in x.symbols]
+
+
+
+        ns = [net_to_edn(mapper, x) for x in x.net]
         texts = [text_to_edn(x) for x in x.texts]
-        js = [junction_to_edn(x) for x in x.junctions]
 
-        hi = [pin_to_edn(i) for i in x.h_inputs]
-        ho = [pin_to_edn(i) for i in x.h_outputs]
 
-        result.append((kw("module"), (x.name, hi, ho, x.attrs), inputs + outputs + bs + js + ns + texts))
+        result.append((kw("sheet"), x.type, ss, ns, texts))
+
 
     return result
 
-
-def junction_to_edn(j: Junction):
-    return kw("junction"), j.data_type, j.id, (j.pos.x, j.pos.y)
 
 
 def pin_to_edn(x: Pin):
     return x.name, x.data_type
 
 
-def header_to_edn(x: Header):
-    return kw("input" if x.is_input else "output"), x.name, x.data_type, x.id, (x.pos.x, x.pos.y), x.attrs
 
-
-def symbol_to_edn(x: Symbol):
+def symbol_to_edn(mapper: Dict, x: Symbol):
     attrs = {}
     for k in x.attrs:
         attrs[kw(k)] = x.attrs[k]
 
-    inputs = [pin_to_edn(i) for i in x.inputs]
-    outputs = [pin_to_edn(i) for i in x.outputs]
-    return kw("symbol"), x.type, x.id, inputs, outputs, (x.pos.x, x.pos.y), attrs
+    uid = mapper[x]
+    if x.pos is None:
+        print(x.type)
+
+    pos = (x.pos.x, x.pos.y)
+
+    if x.type == "Input":
+        return kw("input"), x.pins[0].name, x.pins[0].data_type, uid, pos, x.attrs
+
+    if x.type == "Output":
+        return kw("output"), x.pins[0].name, x.pins[0].data_type, uid, pos, x.attrs
+
+    if x.type == "Junction":
+        return kw("junction"), x.type, uid, pos
+
+    inputs = [(i.name, i.data_type) for i in x.pins if i.is_input]
+    outputs = [(o.name, o.data_type) for o in x.pins if not o.is_input]
+    return kw("symbol"), x.type, uid, inputs, outputs, pos, attrs
 
 
-def proto_to_edn(x: Proto):
+def prototype_to_edn(x: Symbol):
     attrs = {}
     for k in x.attrs:
         attrs[kw(k)] = x.attrs[k]
-    if x.pos:
-        attrs[kw('gui')] = (x.pos.x, x.pos.y)
+    assert x.pos is None
 
-    inputs = [pin_to_edn(i) for i in x.inputs]
-    outputs = [pin_to_edn(i) for i in x.outputs]
-    name = SymbolRef(x.type, x.id).to_str()
-    return kw("proto"), name, inputs, outputs, attrs
+    inputs = [(i.name, i.data_type) for i in x.pins if i.is_input]
+    outputs = [(i.name, i.data_type) for i in x.pins if not i.is_input]
+    return kw("proto"), x.type, inputs, outputs, attrs
 
 
 def text_to_edn(x: Text):
     return kw("text"), x.text, (x.pos.x, x.pos.y)
 
 
-def net_ref_to_edn(x):
-    if type(x) == Header:
-        return "Input" if x.is_input else "Output"
-    if type(x) == Junction:
-        return "Junction"
-    return x.type
+def net_to_edn(mapper: Dict, x: Transport):
+    pos = [(x.x, x.y) for x in x.pos]
 
+    left = mapper[x.left.parent]
+    left_num = x.left.name
+    right = mapper[x.right.parent]
+    right_num = x.right.name
 
-def net_to_edn(x: Conn):
-    pos = [(x.x, x.y) for x in x.gui]
-
-    left = (net_ref_to_edn(x.left), x.left.id, x.left_num)
-    right = (net_ref_to_edn(x.right), x.right.id, x.right_num)
-    return kw("net"), left, right, pos
+    return kw("net"), (left, left_num), (right,right_num), pos

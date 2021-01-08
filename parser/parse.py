@@ -2,12 +2,15 @@ import re
 from collections import defaultdict
 from dto import *
 
+import model as mod
+
 ds = re.compile("DataSet(.+)= \((.+)\); //_\sAttributes\s(.+)")
 obj_def = re.compile(
     'Object (\((?P<outputs>[\n\w,\s\d\.:"<>=*]+?)\))?\s*(?P<name>[\w\d\:\.\-\_>$"]+)[\s\n]*(\((?P<inputs>[\n\w\s,*"]+?)\))?[\s;]*(//_(?P<attributes>.*))?',
     re.MULTILINE)
 pair_split = re.compile('(?P<type>([\w]+)|("[^"]+"))\s+(?P<name>([\w]+)|("[^"]+"))')
 
+net = re.compile("(?P<left>.+)\.(?P<left_num>\d+)( = )(?P<right>.+)\.(?P<right_num>\d+);(\s*//_(?P<attributes>.*))?")
 
 def extract_pins(line: str) -> List[Pin]:
     if not line:
@@ -29,7 +32,7 @@ def extract_pins(line: str) -> List[Pin]:
     return result
 
 
-def extract_attributes(text: str):
+def extract_attributes(text: str) -> Dict:
     if not text:
         return {}
 
@@ -51,10 +54,9 @@ def extract_attributes(text: str):
     return attrs
 
 
-net = re.compile("(?P<left>.+)\.(?P<left_num>\d+)( = )(?P<right>.+)\.(?P<right_num>\d+);(\s*//_(?P<attributes>.*))?")
 
 
-def extract_attr_gui(text) -> List[Pos]:
+def extract_attr_gui(text) -> List[mod.Pos]:
     if not text:
         return []
     if not text.startswith("GUI"):
@@ -64,15 +66,15 @@ def extract_attr_gui(text) -> List[Pos]:
     pairs = text[3:].strip().split(', ')
     for pair in pairs:
         ps = pair.split(',')
-        coords.append(Pos(int(ps[0]), int(ps[1])))
+        coords.append(mod.Pos(int(ps[0]), int(ps[1])))
     return coords
 
 
-def parse_proto_text(text: str, linum: int) -> Text:
+def parse_proto_text(text: str, linum: int) -> Tuple[str, mod.Pos]:
     if not text.startswith("Object Text;  //_GUI "):
         raise ValueError(f"Unexpected text start: {text}")
     items = text[21:].strip().split(',', 2)
-    return Text(items[2].replace("\u0001", "\n"), Pos(int(items[0]), int(items[1])))
+    return items[2].replace("\u0001", "\n"), mod.Pos(int(items[0]), int(items[1]))
 
 
 def parse_symbol_reference(text: str) -> SymbolRef:
@@ -141,7 +143,7 @@ def parse_proto(l: str, linum: int = 0) -> Proto:
     return Proto(ref.symbol_type, ref.id, inputs, outputs, attrs, gui)
 
 
-def parse_object_def(l, body) -> Sheet:
+def parse_object_def(l, body) -> mod.Sheet:
     proto = parse_proto(l)
 
     proto_strs = body['proto']
@@ -159,12 +161,15 @@ def parse_object_def(l, body) -> Sheet:
 
     prototypes = [parse_proto(x, i) for i, x in proto_joined]
 
-    symbols = []
-    inputs = []
-    outputs = []
-    junctions = []
-
     lookup = {}
+
+    class LookupLeaf:
+        def __init__(self, s: mod.Symbol):
+            self.symbol = s
+            self.inputs = [x for x in s.pins if x.is_input]
+            self.outputs = [x for x in s.pins if not x.is_input]
+
+    sheet = mod.make_sheet(proto.type)
 
     for x in prototypes:
         if x.type == "Input":
@@ -172,20 +177,18 @@ def parse_object_def(l, body) -> Sheet:
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(True, x.outputs[0].data_type, x.id, x.outputs[0].name, x.pos, x.attrs)
-
-            inputs.append(h)
-            lookup[f'Input:{x.id or ""}'] = h
+            sym = sheet.add_input(x.outputs[0].name, x.outputs[0].data_type)
+            sym.pos = x.pos
+            lookup[f'Input:{x.id or ""}'] = LookupLeaf(sym)
             continue
         if x.type == "Output":
             # move pos to the real transport location
             x.pos.x += 2
             x.pos.y += 1
 
-            h = Header(False, x.inputs[0].data_type, x.id, x.inputs[0].name, x.pos, x.attrs)
-            outputs.append(h)
-
-            lookup[f'Output:{x.id or ""}'] = h
+            sym = sheet.add_output(x.inputs[0].name, x.inputs[0].data_type)
+            sym.pos = x.pos
+            lookup[f'Output:{x.id or ""}'] = LookupLeaf(sym)
             continue
         if x.type == "Junction":
             x.pos.x += 1
@@ -193,72 +196,66 @@ def parse_object_def(l, body) -> Sheet:
             if x.attrs:
                 raise ValueError("Junctions have attrs!")
 
-            j = Junction(x.inputs[0].data_type, x.id, x.pos)
-            junctions.append(j)
-            lookup[f'Junction:{x.id or ""}'] = j
-
+            sym = sheet.add_junction(x.inputs[0].data_type)
+            sym.pos = x.pos
+            lookup[f'Junction:{x.id or ""}'] = LookupLeaf(sym)
             continue
 
+        sym = sheet.add_symbol(x.type)
+        sym.pos = x.pos
 
-
-        s = Symbol(x.type, x.id, x.inputs, x.outputs, x.attrs, x.pos)
-        symbols.append(s)
-        lookup[f'{x.type}:{x.id or ""}'] = s
-
+        for i in x.inputs:
+            sym.add_input(i.data_type, i.name)
+        for o in x.outputs:
+            sym.add_output(o.data_type, o.name)
+        lookup[f'{x.type}:{x.id or ""}'] = LookupLeaf(sym)
 
     net = [parse_transport_def(x) for i, x in body['behavior']]
 
-    #print(lookup.keys())
-
-    connections = []
     for n in net:
         "Convert references to the model"
         left = lookup[f'{n.left.symbol_type}:{n.left.id or ""}']
         right = lookup[f'{n.right.symbol_type}:{n.right.id or ""}']
 
-        c = Conn(left, n.left.io_num, right, n.right.io_num, n.gui)
-        connections.append(c)
+        left_pin = left.outputs[n.left.io_num]
+        right_pin = right.inputs[n.right.io_num]
+
+        sheet.connect(left_pin, right_pin).pos = n.gui
+
+    for i, x in body['text']:
+        txt, pos = parse_proto_text(x, i)
+        sheet.add_text(txt, pos)
+
+    return sheet
 
 
-
-    texts = [parse_proto_text(x, i) for i, x in body['text']]
-
-    o = Sheet(proto.type, proto.inputs, proto.outputs, proto.attrs, symbols, texts, connections, inputs, outputs, junctions)
-    # print(o)
-    return o
-
-
-def parse_dataset(l) -> Dataset:
+def parse_dataset(l) -> mod.Dataset:
     m = ds.search(l)
 
     name = m.group(1).strip(' "')
     args = [x.strip() for x in m.group(2).strip().split(",")]
+
+    sym = mod.make_dataset(name, args)
     attribs = [x.strip() for x in m.group(3).strip().split(",")]
 
-    context = 0
-    color = 0
-    tree = None
-    com = None
-
     if len(attribs) >= 1:
-        context = int(attribs[0])
+        sym.context = int(attribs[0])
     if len(attribs) >= 2:
-        color = int(attribs[1])
+        sym.color = int(attribs[1])
     if len(attribs) >= 3:
-        tree = attribs[2].split("\\")
+        sym.tree = attribs[2].split("\\")
     if len(attribs) >= 4:
-        com = int(attribs[3])
+        sym.com = int(attribs[3])
 
-    return Dataset(name, args, context, color, tree, com)
+    return sym
 
 
-def parse_text(name, detailed=False) -> File:
+def parse_text(name, detailed=False) -> mod.File:
     with open(name) as f:
         lines = f.readlines()
 
-    datasets = []
-    objects = []
-    prototypes = []
+    file = mod.make_file()
+
     i = 0
     while i < len(lines):
         l = lines[i].strip("\r\n")
@@ -266,11 +263,11 @@ def parse_text(name, detailed=False) -> File:
         if l.startswith("DataSet"):
             data = parse_dataset(lines[i])
             i += 1
-            datasets.append(data)
+
+            file.datasets.append(data)
             continue
 
         if l.startswith("Object "):
-
             body = defaultdict(list)
             body_section = None
             head = ""
@@ -311,9 +308,15 @@ def parse_text(name, detailed=False) -> File:
                     print(f"BODY[{k}]: {body[k]}")
 
             if body:
-                objects.append(parse_object_def(head, body))
+                file.sheets.append(parse_object_def(head, body))
             else:
-                prototypes.append(parse_proto(head))
+                proto = parse_proto(head)
+
+                sym = file.add_prototype(proto.type)
+                for p in proto.inputs:
+                    sym.add_input(p.name, p.data_type)
+                for p in proto.outputs:
+                    sym.add_output(p.name, p.data_type)
 
             continue
 
@@ -322,4 +325,4 @@ def parse_text(name, detailed=False) -> File:
             continue
 
         raise ValueError("Unknown line", l)
-    return File(datasets, objects, prototypes)
+    return file
